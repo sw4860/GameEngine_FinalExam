@@ -23,7 +23,7 @@ public class EnemyManager : MonoBehaviour
 
         for (int i = 0; i < SpawnCount; i++)
         {
-            Vector2 randomPos = UnityEngine.Random.insideUnitCircle * 100f;
+            Vector2 randomPos = UnityEngine.Random.insideUnitCircle * 300f;
             GameObject go = Instantiate(MonsterPrefab, randomPos, Quaternion.identity);
             
             monsterTransforms.Add(go.transform);

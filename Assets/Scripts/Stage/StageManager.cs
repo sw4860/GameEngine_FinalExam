@@ -1,23 +1,34 @@
 using UnityEngine;
 
-public class StageMangaer : MonoBehaviour
+public class StageManager : MonoBehaviour
 {
+    public static StageManager Instance;
     public StageData StageData;
-    private int currentPhase = 0;
-    private float elapsedTime;
+    public float ElapsedTime;
+    public int NextPhase = 0;
+    public int currentPhase = 0;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else if (Instance != this) Destroy(gameObject);
+    }
 
     void Start()
     {
-        elapsedTime = 0.0f;
+        ElapsedTime = 0.0f;
+        NextPhase = 0;
     }
 
     void Update()
     {        
-        elapsedTime += Time.deltaTime;
+        ElapsedTime += Time.deltaTime;
 
-        if (currentPhase + 1 < StageData.phaseDatas.Length && elapsedTime >= StageData.phaseDatas[currentPhase].RequiredTime)
+        if (NextPhase + 1 < StageData.phaseDatas.Length && ElapsedTime >= StageData.phaseDatas[NextPhase].RequiredTime)
         {
-            currentPhase++;
+            NextPhase++;
+            currentPhase = NextPhase - 1;
+            EventManager.OnPhaseChanged?.Invoke();
         }
     }
 }

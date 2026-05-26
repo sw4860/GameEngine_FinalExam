@@ -6,7 +6,8 @@ public enum AchievementType
     TotalMoney,
     TotalConsumeMoney,
     CurrentMoney,
-
+    TotalKill,
+    TotalDeath
 }
 
 [CreateAssetMenu(fileName = "AchievementData", menuName = "AchievementData")]
