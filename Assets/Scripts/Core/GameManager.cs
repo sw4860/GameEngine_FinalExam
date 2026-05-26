@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public GameData CurrentData;
-    public int SessionSpawnedCount;
+    public int SessionKillCount;
 
     void Awake()
     {
@@ -34,12 +34,12 @@ public class GameManager : MonoBehaviour
     public void AddKill()
     {
         CurrentData.TotalKillCount++;
+        SessionKillCount++;
     }
 
     public void AddSpawn()
     {
         CurrentData.TotalSpawnedCount++;
-        SessionSpawnedCount++;
     }
 
     private void OnApplicationQuit()

@@ -66,11 +66,11 @@ public class PlayUIManager : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            if (KillCountText != null && GameManager.Instance.CurrentData != null)
-                KillCountText.text = $"Kills: {GameManager.Instance.CurrentData.TotalKillCount}";
+            if (KillCountText != null)
+                KillCountText.text = $"Kills: {GameManager.Instance.SessionKillCount}";
             
-            if (SpawnCountText != null)
-                SpawnCountText.text = $"Current Spawned: {GameManager.Instance.SessionSpawnedCount}";
+            if (SpawnCountText != null && EnemyManager.Instance != null)
+                SpawnCountText.text = $"Active Enemies: {EnemyManager.Instance.activeEnemies.Count}";
         }
     }
 

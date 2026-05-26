@@ -10,8 +10,8 @@ public class EnemyManager : MonoBehaviour
     public GameObject EnemyPrefab;
     private Transform playerTransform;
 
-    private Queue<EnemyEntity> enemyPool = new Queue<EnemyEntity>();
-    private Dictionary<int, EnemyEntity> activeEnemies = new Dictionary<int, EnemyEntity>();
+    public Queue<EnemyEntity> enemyPool = new Queue<EnemyEntity>();
+    public Dictionary<int, EnemyEntity> activeEnemies = new Dictionary<int, EnemyEntity>();
     private List<int> deadIndices = new List<int>();
     private float _spawnTimer;
 
@@ -78,8 +78,11 @@ public class EnemyManager : MonoBehaviour
             int deficit = phase.maxEnemyCount - activeEnemies.Count;
             if (deficit > 0)
             {
-                int spawnCount = Mathf.Max(1, deficit / 10);
-                spawnCount = Mathf.Min(spawnCount, 100); 
+                int minSpawn = Mathf.Max(1, deficit / 15);
+                int maxSpawn = Mathf.Max(2, deficit / 8);
+                int spawnCount = UnityEngine.Random.Range(minSpawn, maxSpawn + 1);
+                
+                spawnCount = Mathf.Min(spawnCount, 500); 
 
                 for (int i = 0; i < spawnCount; i++)
                 {
