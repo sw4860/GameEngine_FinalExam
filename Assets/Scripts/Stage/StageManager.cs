@@ -24,11 +24,15 @@ public class StageManager : MonoBehaviour
     {        
         ElapsedTime += Time.deltaTime;
 
-        if (NextPhase + 1 < StageData.phaseDatas.Length && ElapsedTime >= StageData.phaseDatas[NextPhase].RequiredTime)
+        // 다음 페이즈가 존재하고, 현재 시간이 다음 페이즈의 시작 시간에 도달했을 때
+        if (currentPhase + 1 < StageData.phaseDatas.Length)
         {
-            NextPhase++;
-            currentPhase = NextPhase - 1;
-            EventManager.OnPhaseChanged?.Invoke();
+            if (ElapsedTime >= StageData.phaseDatas[currentPhase + 1].RequiredTime)
+            {
+                currentPhase++;
+                NextPhase = currentPhase + 1;
+                EventManager.OnPhaseChanged?.Invoke();
+            }
         }
     }
 }

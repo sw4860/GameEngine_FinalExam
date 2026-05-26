@@ -47,13 +47,14 @@ public class Reposition : MonoBehaviour
 
         if (transform.CompareTag("Ground"))
         {
-            if (absDiffX > tileSize * 1.2f)
+            if (absDiffX > tileSize)
             {
                 float dirX = diffX > 0 ? 1 : -1;
                 transform.Translate(Vector3.right * dirX * tileSize * gridCount);
                 RandomizeProps();
             }
-            else if (absDiffY > tileSize * 1.2f)
+            
+            if (absDiffY > tileSize)
             {
                 float dirY = diffY > 0 ? 1 : -1;
                 transform.Translate(Vector3.up * dirY * tileSize * gridCount);

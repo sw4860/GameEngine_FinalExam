@@ -7,6 +7,8 @@ public class PlayUIManager : MonoBehaviour
     [Header("UI References")]
     public TextMeshProUGUI TimeText;
     public TextMeshProUGUI NextPhaseInfoText;
+    public TextMeshProUGUI KillCountText;
+    public TextMeshProUGUI SpawnCountText;
     public Image PhaseGauge;
 
     private StageData stageData;
@@ -42,23 +44,33 @@ public class PlayUIManager : MonoBehaviour
     {
         if (stageData == null || phaseDatas == null) return;
 
-        bool isToEnding = nextPhase >= phaseDatas.Length || elapsedTime >= phaseDatas[nextPhase].RequiredTime;
-
-        float startTime = isToEnding ? (phaseDatas.Length > 0 ? phaseDatas[phaseDatas.Length - 1].RequiredTime : 0) : currentPhaseStartTime;
-        float endTime   = isToEnding ? stageData.EndTime : phaseDatas[nextPhase].RequiredTime;
+        // 현재 페이즈가 마지막인지 확인
+        bool isLastPhase = currentPhase >= phaseDatas.Length - 1;
+        
+        float startTime = phaseDatas[currentPhase].RequiredTime;
+        float endTime = isLastPhase ? stageData.EndTime : phaseDatas[currentPhase + 1].RequiredTime;
         float remaining = Mathf.Max(0, endTime - elapsedTime);
 
         if (NextPhaseInfoText != null)
         {
-            NextPhaseInfoText.text = isToEnding 
+            NextPhaseInfoText.text = isLastPhase 
                 ? $"종료까지 {remaining:N2}초" 
-                : $"{nextPhase + 1}페이즈까지 {remaining:N2}초";
+                : $"다음 페이즈까지 {remaining:N2}초";
         }
 
         if (PhaseGauge != null)
         {
             float duration = endTime - startTime;
             PhaseGauge.fillAmount = duration > 0 ? Mathf.Clamp01((elapsedTime - startTime) / duration) : 1f;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            if (KillCountText != null && GameManager.Instance.CurrentData != null)
+                KillCountText.text = $"Kills: {GameManager.Instance.CurrentData.TotalKillCount}";
+            
+            if (SpawnCountText != null)
+                SpawnCountText.text = $"Current Spawned: {GameManager.Instance.SessionSpawnedCount}";
         }
     }
 
@@ -70,8 +82,6 @@ public class PlayUIManager : MonoBehaviour
         phaseDatas = stageData.phaseDatas;
         currentPhase = StageManager.Instance.currentPhase;
         nextPhase = StageManager.Instance.NextPhase;
-    
-        currentPhaseStartTime = phaseDatas[currentPhase].RequiredTime;
     }
 
     void OnDestroy()

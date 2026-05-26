@@ -6,6 +6,7 @@ public class PhaseData
 {
     public float RequiredTime;
     public int maxEnemyCount;
+    public float SpawnInterval;
     public EnemyData[] enemyDatas;
 }
 

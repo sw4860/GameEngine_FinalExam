@@ -7,12 +7,13 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance;
-    public GameObject EnemyPrefab; // Assign in Inspector
+    public GameObject EnemyPrefab;
     private Transform playerTransform;
 
-    private List<EnemyEntity> enemyPool = new List<EnemyEntity>();
+    private Queue<EnemyEntity> enemyPool = new Queue<EnemyEntity>();
     private Dictionary<int, EnemyEntity> activeEnemies = new Dictionary<int, EnemyEntity>();
     private List<int> deadIndices = new List<int>();
+    private float _spawnTimer;
 
     void Awake()
     {
@@ -22,6 +23,18 @@ public class EnemyManager : MonoBehaviour
     void Start()
     {
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        PreSpawnPool();
+    }
+
+    void PreSpawnPool()
+    {
+        for (int i = 0; i < SpatialSystem.MAX_ENEMIES; i++)
+        {
+            GameObject go = Instantiate(EnemyPrefab, transform);
+            EnemyEntity entity = go.GetComponent<EnemyEntity>();
+            go.SetActive(false);
+            enemyPool.Enqueue(entity);
+        }
     }
 
     void Update()
@@ -31,15 +44,18 @@ public class EnemyManager : MonoBehaviour
         HandleSpawning();
 
         SpatialSystem.Instance.PlayerPosition = new float2(playerTransform.position.x, playerTransform.position.y);
+        
+        SpatialSystem.Instance.UpdateReadOnlyPositions();
 
         EnemyMoveJob job = new EnemyMoveJob
         {
             PlayerPos = SpatialSystem.Instance.PlayerPosition,
             DeltaTime = Time.deltaTime,
-            MoveSpeed = 2.0f, 
 
             EnemyPositions = SpatialSystem.Instance.EnemyPositions,
-            EnemyActive = SpatialSystem.Instance.EnemyActive
+            ReadOnlyEnemyPositions = SpatialSystem.Instance.ReadOnlyPositions,
+            EnemyActive = SpatialSystem.Instance.EnemyActive,
+            EnemySpeeds = SpatialSystem.Instance.EnemySpeeds
         };
 
         JobHandle handle = job.Schedule(SpatialSystem.MAX_ENEMIES, 64);
@@ -55,37 +71,43 @@ public class EnemyManager : MonoBehaviour
         int currentPhaseIdx = StageManager.Instance.currentPhase;
         PhaseData phase = StageManager.Instance.StageData.phaseDatas[currentPhaseIdx];
         
-        if (activeEnemies.Count < phase.maxEnemyCount)
+        _spawnTimer += Time.deltaTime;
+
+        if (_spawnTimer >= phase.SpawnInterval)
         {
-            SpawnEnemy(phase.enemyDatas[UnityEngine.Random.Range(0, phase.enemyDatas.Length)]);
+            int deficit = phase.maxEnemyCount - activeEnemies.Count;
+            if (deficit > 0)
+            {
+                int spawnCount = Mathf.Max(1, deficit / 10);
+                spawnCount = Mathf.Min(spawnCount, 100); 
+
+                for (int i = 0; i < spawnCount; i++)
+                {
+                    EnemyData data = phase.enemyDatas[UnityEngine.Random.Range(0, phase.enemyDatas.Length)];
+                    SpawnEnemy(data);
+                }
+            }
+            _spawnTimer = 0f;
         }
     }
 
     void SpawnEnemy(EnemyData data)
     {
-        EnemyEntity entity = GetFromPool();
+        if (enemyPool.Count == 0) return;
+
+        EnemyEntity entity = enemyPool.Dequeue();
         Vector2 spawnPos = (Vector2)playerTransform.position + UnityEngine.Random.insideUnitCircle.normalized * 15f;
         entity.transform.position = spawnPos;
         entity.gameObject.SetActive(true);
         entity.Init(data);
 
+        if (GameManager.Instance != null)
+            GameManager.Instance.AddSpawn();
+
         if (entity.SpatialIndex != -1)
         {
             activeEnemies[entity.SpatialIndex] = entity;
         }
-    }
-
-    EnemyEntity GetFromPool()
-    {
-        foreach (var e in enemyPool)
-        {
-            if (!e.gameObject.activeSelf) return e;
-        }
-
-        GameObject go = Instantiate(EnemyPrefab, transform);
-        EnemyEntity entity = go.GetComponent<EnemyEntity>();
-        enemyPool.Add(entity);
-        return entity;
     }
 
     void SyncVisuals()
@@ -104,13 +126,15 @@ public class EnemyManager : MonoBehaviour
             else
             {
                 float2 pos = SpatialSystem.Instance.EnemyPositions[index];
-                entity.transform.position = new Vector3(pos.x, pos.y, 0);
+                entity.SetPosition(new Vector2(pos.x, pos.y));
             }
         }
 
         foreach (int index in deadIndices)
         {
+            EnemyEntity entity = activeEnemies[index];
             activeEnemies.Remove(index);
+            enemyPool.Enqueue(entity);
         }
     }
 }
