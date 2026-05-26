@@ -6,6 +6,8 @@ public enum EnemyType { Melee, Ranged }
 public class EnemyData : ScriptableObject
 {
     public EnemyType EnemyType;
+    public Sprite EnemySprite;
+    public AnimatorOverrideController animOverride;
     public float MoveSpeed;
     public float MaxHp;
     public float AttackRange;

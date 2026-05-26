@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d57b4d9e5c7df0f448f2a055093d9a1b, type: 3}
-  m_Name: NewEnemyData
+  m_Name: Enemy2
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyType: 0
-  MoveSpeed: 0
+  EnemySprite: {fileID: 0}
+  animOverride: {fileID: 22100000, guid: 12cfc8b2360c2fc4499d4f6f6607671a, type: 2}
+  MoveSpeed: 5
   MaxHp: 0
   AttackRange: 0
-  ColliderRadius: 0
+  ColliderRadius: 1

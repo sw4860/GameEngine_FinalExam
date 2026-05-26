@@ -6,26 +6,28 @@ using Unity.Mathematics;
 [BurstCompile]
 public struct EnemyMoveJob : IJobParallelFor
 {
-    [ReadOnly] public float2 PlayerPosition;
+    [ReadOnly] public float2 PlayerPos;
     [ReadOnly] public float DeltaTime;
     [ReadOnly] public float MoveSpeed;
 
-    public NativeArray<float2> MonsterPositions;
+    public NativeArray<float2> EnemyPositions;
+    [ReadOnly] public NativeArray<bool> EnemyActive;
 
     public void Execute(int index)
     {
-        float2 currentPos = MonsterPositions[index];
+        if (!EnemyActive[index]) return;
+
+        float2 pos = EnemyPositions[index];
         
-        float2 direction = PlayerPosition - currentPos;
-        
-        float distance = math.length(direction);
-        if (distance > 0.01f)
+        // Simple move towards player
+        float2 toPlayer = PlayerPos - pos;
+        float dist = math.length(toPlayer);
+
+        if (dist > 0.1f)
         {
-            direction /= distance; 
-            
-            currentPos += direction * MoveSpeed * DeltaTime;
-            
-            MonsterPositions[index] = currentPos;
+            float2 dir = toPlayer / dist;
+            pos += dir * MoveSpeed * DeltaTime;
+            EnemyPositions[index] = pos;
         }
     }
 }

@@ -14,16 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   phaseDatas:
   - RequiredTime: 0
-    maxEnemyCount: 0
-    enemyDatas: []
+    maxEnemyCount: 100
+    enemyDatas:
+    - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
   - RequiredTime: 30
-    maxEnemyCount: 0
+    maxEnemyCount: 500
     enemyDatas:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
+    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
   - RequiredTime: 90
-    maxEnemyCount: 0
+    maxEnemyCount: 3000
     enemyDatas:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
+    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
   EndTime: 300

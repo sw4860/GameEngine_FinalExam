@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
     public float MoveSpeed;
 
     private Rigidbody2D rb;
-    private Vector2 input;
+    [HideInInspector] public Vector2 input;
 
     void Awake()
     {
