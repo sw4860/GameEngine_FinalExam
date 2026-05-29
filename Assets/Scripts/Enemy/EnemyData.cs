@@ -12,4 +12,5 @@ public class EnemyData : ScriptableObject
     public float MaxHp;
     public float AttackRange;
     public float ColliderRadius;
+    public bool CanNoclip = false;
 }

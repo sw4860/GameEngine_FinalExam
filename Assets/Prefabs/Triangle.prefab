@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1829581910459493632}
   - component: {fileID: 6761399065365519466}
-  - component: {fileID: -4307910039517638963}
-  - component: {fileID: 9129922310282182957}
+  - component: {fileID: -1373853264844060623}
+  - component: {fileID: 6155316694279832957}
   m_Layer: 0
   m_Name: Triangle
   m_TagString: Prop
@@ -93,7 +93,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &-4307910039517638963
+--- !u!114 &-1373853264844060623
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105,8 +105,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe60d212b0ec03346b66eee03a1a8f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Prop
---- !u!60 &9129922310282182957
-PolygonCollider2D:
+  Radius: 0
+--- !u!61 &6155316694279832957
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -139,7 +140,7 @@ PolygonCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.21133333}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.28866667}
@@ -149,9 +150,5 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0, y: 0.5773587}
-      - {x: -0.5, y: -0.28866667}
-      - {x: 0.5, y: -0.28866667}
-  m_UseDelaunayMesh: 1
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

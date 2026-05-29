@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2548611724250968956}
   - component: {fileID: 6121140063091650963}
-  - component: {fileID: 8705482963939487198}
-  - component: {fileID: 1276032328788145496}
+  - component: {fileID: 4443652039518405189}
+  - component: {fileID: -493013393597976017}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Prop
@@ -93,7 +93,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &8705482963939487198
+--- !u!114 &4443652039518405189
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105,8 +105,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe60d212b0ec03346b66eee03a1a8f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Prop
---- !u!70 &1276032328788145496
-CapsuleCollider2D:
+  Radius: 4
+--- !u!61 &-493013393597976017
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -140,5 +141,14 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 2}
+    newSize: {x: 1, y: 2}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   m_Size: {x: 1, y: 2}
-  m_Direction: 0
+  m_EdgeRadius: 0

@@ -28,11 +28,14 @@ public class PlayUIManager : MonoBehaviour
         UpdatePhaseData();
     }
 
+    private float _frameDeltaTime = 0.0f;
+
     void Update()
     {
         if (StageManager.Instance == null) return;
 
         elapsedTime = StageManager.Instance.ElapsedTime;
+        _frameDeltaTime += (Time.unscaledDeltaTime - _frameDeltaTime) * 0.1f;
         
         if (TimeText != null)
             TimeText.text = $"{elapsedTime:N2}";
@@ -70,7 +73,11 @@ public class PlayUIManager : MonoBehaviour
                 KillCountText.text = $"Kills: {GameManager.Instance.SessionKillCount}";
             
             if (SpawnCountText != null && EnemyManager.Instance != null)
-                SpawnCountText.text = $"Active Enemies: {EnemyManager.Instance.activeEnemies.Count}";
+            {
+                float ms = _frameDeltaTime * 1000.0f;
+                float fps = 1.0f / _frameDeltaTime;
+                SpawnCountText.text = $"Active: {EnemyManager.Instance.activeCount} | {ms:N1}ms ({fps:N0} FPS)";
+            }
         }
     }
 

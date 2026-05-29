@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Reposition : MonoBehaviour
 {
@@ -25,6 +27,21 @@ public class Reposition : MonoBehaviour
         for (int i = 0; i < propCountPerTile; i++)
         {
             GameObject prop = Instantiate(propPrefabs[Random.Range(0, propPrefabs.Length)], transform);
+            
+            // Add Prop component for avoidance
+            Prop propScript = prop.GetComponent<Prop>();
+            if (propScript == null) propScript = prop.AddComponent<Prop>();
+            
+            // Try to set radius based on collider
+            CircleCollider2D circle = prop.GetComponent<CircleCollider2D>();
+            if (circle != null) propScript.Radius = circle.radius * math.max(prop.transform.lossyScale.x, prop.transform.lossyScale.y);
+            else
+            {
+                BoxCollider2D box = prop.GetComponent<BoxCollider2D>();
+                if (box != null) propScript.Radius = math.max(box.size.x, box.size.y) * 0.5f * math.max(prop.transform.lossyScale.x, prop.transform.lossyScale.y);
+                else propScript.Radius = 0.5f; // Default
+            }
+
             prop.SetActive(false);
             myProps.Add(prop);
         }

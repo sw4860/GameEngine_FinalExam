@@ -10,7 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8080584179703272095}
   - component: {fileID: 4549671791095311013}
-  - component: {fileID: 6827093257920301630}
+  - component: {fileID: 648279680628021529}
+  - component: {fileID: -3682197495224560859}
   m_Layer: 0
   m_Name: Isometric Diamond
   m_TagString: Prop
@@ -92,8 +93,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!60 &6827093257920301630
-PolygonCollider2D:
+--- !u!114 &648279680628021529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2256593548356644396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe60d212b0ec03346b66eee03a1a8f3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Prop
+  Radius: 0.5
+--- !u!61 &-3682197495224560859
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -136,10 +150,5 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0, y: 0.25}
-      - {x: -0.5, y: 0}
-      - {x: 0, y: -0.25}
-      - {x: 0.5, y: 0}
-  m_UseDelaunayMesh: 1
+  m_Size: {x: 1, y: 0.5}
+  m_EdgeRadius: 0

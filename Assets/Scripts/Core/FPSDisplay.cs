@@ -7,7 +7,6 @@ public class FPSDisplay : MonoBehaviour
 
     void Update()
     {
-        // 프레임 간의 시간을 누적 (Smoothing 적용)
         _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
     }
 
@@ -17,11 +16,10 @@ public class FPSDisplay : MonoBehaviour
 
         GUIStyle style = new GUIStyle();
 
-        // 텍스트가 잘리지 않도록 Rect 높이를 충분히 확보 (5% 정도로 상향)
         Rect rect = new Rect(10, 10, w, h * 5 / 100);
         style.alignment = TextAnchor.UpperRight;
         style.fontSize = h * 2 / 50; 
-        style.normal.textColor = new Color(0.0f, 1.0f, 0.0f, 1.0f); // 초록색
+        style.normal.textColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
 
         float msec = _deltaTime * 1000.0f;
         float fps = 1.0f / _deltaTime;

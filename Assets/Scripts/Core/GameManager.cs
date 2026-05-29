@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        EventManager.OnEnemyDeath += AddKill;
     }
 
     public void SaveGame()
@@ -47,9 +49,13 @@ public class GameManager : MonoBehaviour
         SaveGame();
     }
 
-    // 일시 정지나 백그라운드 전환 시에도 저장하도록 설정
     private void OnApplicationPause(bool pause)
     {
         if (pause) SaveGame();
+    }
+
+    void OnDestroy()
+    {
+        EventManager.OnEnemyDeath -= AddKill;
     }
 }

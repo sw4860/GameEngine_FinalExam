@@ -16,6 +16,7 @@ MonoBehaviour:
   EnemySprite: {fileID: 0}
   animOverride: {fileID: 22100000, guid: 8d1d920724ffb8a409ce0e458dc4b7a9, type: 2}
   MoveSpeed: 5
-  MaxHp: 0
+  MaxHp: 3
   AttackRange: 0
-  ColliderRadius: 1
+  ColliderRadius: 0.75
+  CanNoclip: 0
