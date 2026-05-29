@@ -34,7 +34,7 @@ public struct EnemyMoveJob : IJobParallelFor
         float distSq = math.lengthsq(toPlayer);
         float2 moveDir = float2.zero;
 
-        if (distSq > 0.01f)
+        if (distSq > 0.0001f)
         {
             moveDir = toPlayer * math.rsqrt(distSq);
         }
@@ -69,7 +69,9 @@ public struct EnemyMoveJob : IJobParallelFor
                         if (dSq < minSepDistSq && dSq > 0.0001f)
                         {
                             float d = math.sqrt(dSq);
-                            separation += (diff / d) * (minSepDist - d);
+                            // Use quadratic falloff for smoother separation
+                            float overlap = (minSepDist - d) / minSepDist;
+                            separation += (diff / d) * (overlap * overlap);
                         }
                     } while (SpatialGrid.TryGetNextValue(out otherIndex, ref itEnemy));
                 }
@@ -88,27 +90,31 @@ public struct EnemyMoveJob : IJobParallelFor
 
                         if (dist < minSafeDist && dist > 0.0001f)
                         {
-                            obstacleAvoidance += (diff / dist) * (minSafeDist - dist);
+                            float overlap = (minSafeDist - dist) / minSafeDist;
+                            obstacleAvoidance += (diff / dist) * (overlap * overlap);
                         }
                     } while (ObstacleGrid.TryGetNextValue(out obsIndex, ref itObs));
                 }
             }
         }
 
-        // Normalize forces slightly to prevent explosive movement
+        // Clamp combined forces to prevent explosive movement
         float sepLen = math.length(separation);
         if (sepLen > 1.0f) separation /= sepLen;
 
         float avdLen = math.length(obstacleAvoidance);
         if (avdLen > 1.0f) obstacleAvoidance /= avdLen;
 
-        float2 finalVelocity = moveDir + separation * SeparationWeight + obstacleAvoidance * ObstacleWeight;
-        float finalLenSq = math.lengthsq(finalVelocity);
+        // Calculate final steering
+        float2 steering = moveDir + separation * SeparationWeight + obstacleAvoidance * ObstacleWeight;
+        float steerLen = math.length(steering);
         
-        if (finalLenSq > 0.001f)
+        if (steerLen > 0.001f)
         {
-            float finalLen = math.sqrt(finalLenSq);
-            pos += (finalVelocity / finalLen) * moveSpeed * DeltaTime;
+            // Instead of moving at full speed, we scale by the steering magnitude (clamped to 1.0)
+            // This allows the enemy to slow down when forces are conflicting, reducing jitter.
+            float currentSpeed = math.min(steerLen, 1.0f) * moveSpeed;
+            pos += (steering / steerLen) * currentSpeed * DeltaTime;
         }
 
         EnemyPositions[index] = pos;
