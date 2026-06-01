@@ -14,50 +14,65 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageData
   phaseDatas:
   - RequiredTime: 0
-    maxEnemyCount: 30
-    SpawnInterval: 0.2
+    maxEnemyCount: 10
+    SpawnInterval: 0.7
     enemyDatas:
     - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
+    bossData: []
+  - RequiredTime: 30
+    maxEnemyCount: 25
+    SpawnInterval: 0.5
+    enemyDatas:
+    - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
+    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
+    bossData: []
   - RequiredTime: 60
-    maxEnemyCount: 100
-    SpawnInterval: 0.2
-    enemyDatas:
-    - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-  - RequiredTime: 90
-    maxEnemyCount: 300
-    SpawnInterval: 0.2
+    maxEnemyCount: 40
+    SpawnInterval: 0.5
     enemyDatas:
     - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
+  - RequiredTime: 120
+    maxEnemyCount: 80
+    SpawnInterval: 0.5
+    enemyDatas:
+    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
+    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
   - RequiredTime: 180
-    maxEnemyCount: 500
-    SpawnInterval: 0.2
+    maxEnemyCount: 125
+    SpawnInterval: 0.5
     enemyDatas:
     - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
+  - RequiredTime: 300
+    maxEnemyCount: 250
+    SpawnInterval: 0.3
+    enemyDatas:
+    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
+    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
   - RequiredTime: 600
-    maxEnemyCount: 1000
+    maxEnemyCount: 1500
     SpawnInterval: 0.2
     enemyDatas:
     - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
   - RequiredTime: 900
-    maxEnemyCount: 1000
-    SpawnInterval: 0.2
+    maxEnemyCount: 1500
+    SpawnInterval: 0.1
     enemyDatas:
     - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
   - RequiredTime: 1200
-    maxEnemyCount: 1500
-    SpawnInterval: 0.2
+    maxEnemyCount: 3000
+    SpawnInterval: 0.1
     enemyDatas:
     - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
-  - RequiredTime: 1500
-    maxEnemyCount: 1500
-    SpawnInterval: 0.2
-    enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    bossData: []
   EndTime: 1800

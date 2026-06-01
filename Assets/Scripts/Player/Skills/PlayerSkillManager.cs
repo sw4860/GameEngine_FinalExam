@@ -1,27 +1,60 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(0)]
 public class PlayerSkillManager : MonoBehaviour
 {
-    public List<SkillData> StartingSkills;
-    private List<SkillData> _activeSkills = new List<SkillData>();
+    public static PlayerSkillManager Instance;
+    public int MaxSkillSlots = 6;
 
-    void Start()
+    private List<SkillData> _activeSkills = new List<SkillData>();
+    public List<SkillData> ActiveSkills => _activeSkills;
+
+    private void Awake()
     {
-        if (StartingSkills != null)
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    void LateUpdate()
+    {
+        for (int i = 0; i < _activeSkills.Count; i++)
         {
-            foreach (var skill in StartingSkills)
-            {
-                AddSkill(skill);
-            }
+            _activeSkills[i].OnUpdate(gameObject);
         }
     }
 
-    public void AddSkill(SkillData skillData)
+    public void AddOrLevelUpSkill(SkillData skillSO)
     {
-        if (skillData == null) return;
+        var existing = GetActiveSkillInstance(skillSO);
+        if (existing != null)
+        {
+            existing.OnLevelUp(gameObject);
+        }
+        else
+        {
+            AddSkill(skillSO);
+        }
+    }
+
+    public void AddSkill(SkillData skillSO)
+    {
+        if (skillSO == null) return;
+
+        SkillData skillInstance = Instantiate(skillSO);
+        skillInstance.OnEquip(gameObject);
+        _activeSkills.Add(skillInstance);
+    }
+
+    public SkillData GetActiveSkillInstance(SkillData skillSO)
+    {
+        if (skillSO == null) return null;
         
-        skillData.OnEquip(gameObject);
-        _activeSkills.Add(skillData);
+        string targetName = string.IsNullOrEmpty(skillSO.SkillName) ? skillSO.name : skillSO.SkillName;
+        return _activeSkills.Find(s => {
+            string currentName = string.IsNullOrEmpty(s.SkillName) ? s.name : s.SkillName;
+            // 인스턴스화된 경우 (Clone)이 붙을 수 있으므로 주의 (하지만 보통 SkillName 필드를 사용하므로 안전함)
+            return currentName == targetName;
+        });
     }
 }

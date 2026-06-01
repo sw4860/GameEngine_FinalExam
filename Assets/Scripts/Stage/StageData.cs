@@ -2,12 +2,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
+public class BossData
+{
+    public EnemyData EnemyData;
+    public int count;
+}
+
+[System.Serializable]
 public class PhaseData
 {
     public float RequiredTime;
     public int maxEnemyCount;
     public float SpawnInterval;
     public EnemyData[] enemyDatas;
+    public BossData[] bossData;
 }
 
 [CreateAssetMenu(fileName = "StageData", menuName = "StageData")]

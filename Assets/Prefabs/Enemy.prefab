@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 1c14e5878fe2e4745bfb534018369208, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,8 +106,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEntity
   EnemyData: {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
-  SpatialIndex: -1
+  PoolIndex: -1
   CurrentHp: 0
+  IsActive: 0
+  isDying: 0
+  DeathTimer: 0
 --- !u!95 &7213050942848526663
 Animator:
   serializedVersion: 7
@@ -118,8 +121,8 @@ Animator:
   m_GameObject: {fileID: 7336750013380583673}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f2855d618fc8d9c499189d3f39b9cbbc, type: 2}
-  m_CullingMode: 2
+  m_Controller: {fileID: 22100000, guid: 5c0dbe6e34a70784184f3c99295b5646, type: 2}
+  m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0

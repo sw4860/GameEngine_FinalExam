@@ -16,8 +16,8 @@ public struct EnemyMoveJob : IJobParallelFor
     [ReadOnly] public NativeArray<float> EnemyRadii;
 
     [ReadOnly] public NativeParallelMultiHashMap<int, int> SpatialGrid;
-    [ReadOnly] public NativeParallelMultiHashMap<int, int> ObstacleGrid;
     [ReadOnly] public NativeArray<ObstacleData> Obstacles;
+    [ReadOnly] public int ObstacleCount;
 
     public float SeparationWeight;
     public float ObstacleWeight;
@@ -42,7 +42,6 @@ public struct EnemyMoveJob : IJobParallelFor
         float2 separation = float2.zero;
         float2 obstacleAvoidance = float2.zero;
 
-        // Spatial Grid - Enemy Separation & Obstacle Avoidance
         int2 cell = (int2)math.floor(pos / SpatialSystem.CELL_SIZE);
 
         for (int x = -1; x <= 1; x++)
@@ -51,7 +50,6 @@ public struct EnemyMoveJob : IJobParallelFor
             {
                 int hash = ( (cell.x + x) * 73856093) ^ ((cell.y + y) * 19349663);
                 
-                // Enemy Separation
                 if (SpatialGrid.TryGetFirstValue(hash, out int otherIndex, out var itEnemy))
                 {
                     do
@@ -69,50 +67,43 @@ public struct EnemyMoveJob : IJobParallelFor
                         if (dSq < minSepDistSq && dSq > 0.0001f)
                         {
                             float d = math.sqrt(dSq);
-                            // Use quadratic falloff for smoother separation
                             float overlap = (minSepDist - d) / minSepDist;
                             separation += (diff / d) * (overlap * overlap);
                         }
                     } while (SpatialGrid.TryGetNextValue(out otherIndex, ref itEnemy));
                 }
-
-                // Obstacle Avoidance
-                if (ObstacleGrid.TryGetFirstValue(hash, out int obsIndex, out var itObs))
-                {
-                    do
-                    {
-                        float2 obsPos = Obstacles[obsIndex].Position;
-                        float obsRadius = Obstacles[obsIndex].Radius;
-                        
-                        float2 diff = pos - obsPos;
-                        float dist = math.length(diff);
-                        float minSafeDist = radius + obsRadius + 0.2f;
-
-                        if (dist < minSafeDist && dist > 0.0001f)
-                        {
-                            float overlap = (minSafeDist - dist) / minSafeDist;
-                            obstacleAvoidance += (diff / dist) * (overlap * overlap);
-                        }
-                    } while (ObstacleGrid.TryGetNextValue(out obsIndex, ref itObs));
-                }
             }
         }
 
-        // Clamp combined forces to prevent explosive movement
+        for (int i = 0; i < ObstacleCount; i++)
+        {
+            float2 obsPos = Obstacles[i].Position;
+            float obsRadius = Obstacles[i].Radius;
+            
+            float2 diff = pos - obsPos;
+            float dSq = math.lengthsq(diff);
+            float minSafeDist = radius + obsRadius + 0.2f;
+            float minSafeDistSq = minSafeDist * minSafeDist;
+
+            if (dSq < minSafeDistSq && dSq > 0.0001f)
+            {
+                float d = math.sqrt(dSq);
+                float overlap = (minSafeDist - d) / minSafeDist;
+                obstacleAvoidance += (diff / d) * (overlap * overlap);
+            }
+        }
+
         float sepLen = math.length(separation);
         if (sepLen > 1.0f) separation /= sepLen;
 
         float avdLen = math.length(obstacleAvoidance);
         if (avdLen > 1.0f) obstacleAvoidance /= avdLen;
 
-        // Calculate final steering
         float2 steering = moveDir + separation * SeparationWeight + obstacleAvoidance * ObstacleWeight;
         float steerLen = math.length(steering);
         
         if (steerLen > 0.001f)
         {
-            // Instead of moving at full speed, we scale by the steering magnitude (clamped to 1.0)
-            // This allows the enemy to slow down when forces are conflicting, reducing jitter.
             float currentSpeed = math.min(steerLen, 1.0f) * moveSpeed;
             pos += (steering / steerLen) * currentSpeed * DeltaTime;
         }

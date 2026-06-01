@@ -6,8 +6,6 @@ public class Prop : MonoBehaviour
 
     void OnEnable()
     {
-        if (Radius < 0.01f) Radius = 0.5f;
-
         if (ObstacleManager.Instance != null && !ObstacleManager.Instance.ActiveProps.Contains(this))
         {
             ObstacleManager.Instance.ActiveProps.Add(this);

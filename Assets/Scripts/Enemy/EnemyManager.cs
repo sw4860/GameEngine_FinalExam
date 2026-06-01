@@ -4,39 +4,62 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Jobs;
+using Random = UnityEngine.Random;
 
 [DefaultExecutionOrder(-100)]
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance;
     public GameObject EnemyPrefab;
-    private Transform playerTransform;
 
     public Queue<EnemyEntity> enemyPool = new Queue<EnemyEntity>();
 
-    public EnemyEntity[] _activeSlots   = new EnemyEntity[SpatialSystem.MAX_ENEMIES];
-    public List<int>     _activeIndices = new List<int>(SpatialSystem.MAX_ENEMIES);
-    private readonly bool[] _activeIndexSet = new bool[SpatialSystem.MAX_ENEMIES];
-    public int activeCount => _activeIndices.Count;
+    public EnemyEntity[] _activeSlots;
+    private List<int> _activeIndices;
+    private bool[] _activeIndexSet;
+    public int activeCount => _activeIndices != null ? _activeIndices.Count : 0;
 
-    private float      _spawnTimer;
-    private JobHandle  _lateHandle;          // LateUpdate에서 Complete할 핸들
+    private float _spawnTimer;
+    private JobHandle _lateHandle;
     private readonly List<int> _toRemove = new List<int>(256);
+    private readonly List<int> _dyingIndices = new List<int>(128);
 
     [Header("Movement Weights")]
     public float SeparationWeight = 5.0f;
-    public float ObstacleWeight   = 10.0f;
+    public float ObstacleWeight = 10.0f;
 
     [Header("Spawning Config")]
-    public float SpawnRadius    = 15f;
+    public float SpawnRadius = 15f;
     public float DespawnDistance = 25f;
 
-    // -------------------------------------------------------
-    void Awake() { Instance = this; }
+    private float[] _attackTimers;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            _activeSlots = new EnemyEntity[SpatialSystem.MAX_ENEMIES];
+            _activeIndices = new List<int>(SpatialSystem.MAX_ENEMIES);
+            _activeIndexSet = new bool[SpatialSystem.MAX_ENEMIES];
+            _attackTimers = new float[SpatialSystem.MAX_ENEMIES];
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void RegisterDyingEnemy(int index)
+    {
+        if (!_dyingIndices.Contains(index))
+        {
+            _dyingIndices.Add(index);
+        }
+    }
 
     void Start()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         PreSpawnPool();
     }
 
@@ -46,28 +69,25 @@ public class EnemyManager : MonoBehaviour
         {
             GameObject go = Instantiate(EnemyPrefab, transform);
             EnemyEntity entity = go.GetComponent<EnemyEntity>();
-            entity.SetSortingOrder(i + 1);
+            
+            entity.PoolIndex = i;
+            SpatialSystem.Instance.PreRegisterEnemyTransform(go.transform);
+            
             go.SetActive(false);
             enemyPool.Enqueue(entity);
         }
     }
 
-    // -------------------------------------------------------
     void Update()
     {
-        if (playerTransform == null) return;
+        if (SpatialSystem.Instance == null) return;
 
         HandleSpawning();
+        HandleDyingEnemies();
+        HandleEnemyAttacks();
 
-        // ── Spatial 시스템 업데이트 ──────────────────────────
-        SpatialSystem.Instance.PlayerPosition =
-            new float2(playerTransform.position.x, playerTransform.position.y);
-
-        // ReadOnlyPositions = 이번 프레임 시작 시점의 위치 스냅샷
-        // (MoveJob이 EnemyPositions를 덮어쓰기 전에 복사)
         SpatialSystem.Instance.UpdateReadOnlyPositions();
 
-        // ── Enemy Grid ──────────────────────────────────────
         SpatialSystem.Instance.SpatialGrid.Clear();
         var buildGridJob = new SpatialSystem.BuildSpatialGridJob
         {
@@ -77,215 +97,253 @@ public class EnemyManager : MonoBehaviour
         };
         JobHandle buildHandle = buildGridJob.Schedule(SpatialSystem.MAX_ENEMIES, 64);
 
-        // ── Obstacle Grid ───────────────────────────────────
         NativeArray<ObstacleData> obstacles = default;
-        bool      createdTemp  = false;
-        JobHandle obsGridHandle = default;
+        bool createdTemp = false;
+        int obsCount = 0;
 
         if (ObstacleManager.Instance != null)
         {
             ObstacleManager.Instance.UpdateObstacleData();
             obstacles = ObstacleManager.Instance.ObstacleDatas;
-
+            obsCount = ObstacleManager.Instance.GetActiveCount();
+            
             SpatialSystem.Instance.ObstacleGrid.Clear();
-            var obsBuildJob = new SpatialSystem.BuildObstacleGridJob
-            {
-                Obstacles = obstacles,
-                Count     = ObstacleManager.Instance.GetActiveCount(),
-                Grid      = SpatialSystem.Instance.ObstacleGrid.AsParallelWriter()
-            };
-            obsGridHandle = obsBuildJob.Schedule(ObstacleManager.Instance.GetActiveCount(), 32);
         }
         else
         {
-            obstacles    = new NativeArray<ObstacleData>(0, Allocator.TempJob);
-            createdTemp  = true;
+            obstacles = new NativeArray<ObstacleData>(0, Allocator.TempJob);
+            createdTemp = true;
         }
 
-        JobHandle combinedBuildHandle =
-            JobHandle.CombineDependencies(buildHandle, obsGridHandle);
-
-        // ── Move Job ────────────────────────────────────────
         var moveJob = new EnemyMoveJob
         {
-            PlayerPos              = SpatialSystem.Instance.PlayerPosition,
-            DeltaTime              = Time.deltaTime,
-            EnemyPositions         = SpatialSystem.Instance.EnemyPositions,
+            PlayerPos = SpatialSystem.Instance.PlayerPosition,
+            DeltaTime = Time.deltaTime,
+            EnemyPositions = SpatialSystem.Instance.EnemyPositions,
             ReadOnlyEnemyPositions = SpatialSystem.Instance.ReadOnlyPositions,
-            EnemyActive            = SpatialSystem.Instance.EnemyActive,
-            EnemySpeeds            = SpatialSystem.Instance.EnemySpeeds,
-            EnemyRadii             = SpatialSystem.Instance.EnemyRadii,
-            SpatialGrid            = SpatialSystem.Instance.SpatialGrid,
-            ObstacleGrid           = SpatialSystem.Instance.ObstacleGrid,
-            Obstacles              = obstacles,
-            SeparationWeight       = SeparationWeight,
-            ObstacleWeight         = ObstacleWeight
+            EnemyActive = SpatialSystem.Instance.EnemyActive,
+            EnemySpeeds = SpatialSystem.Instance.EnemySpeeds,
+            EnemyRadii = SpatialSystem.Instance.EnemyRadii,
+            SpatialGrid = SpatialSystem.Instance.SpatialGrid,
+            Obstacles = obstacles,
+            ObstacleCount = obsCount,
+            SeparationWeight = SeparationWeight,
+            ObstacleWeight = ObstacleWeight
         };
-        JobHandle moveHandle = moveJob.Schedule(SpatialSystem.MAX_ENEMIES, 64, combinedBuildHandle);
+        JobHandle moveHandle = moveJob.Schedule(SpatialSystem.MAX_ENEMIES, 64, buildHandle);
 
-        // ── Despawn Mark Job ────────────────────────────────
         var despawnJob = new SpatialSystem.DespawnMarkJob
         {
-            Positions     = SpatialSystem.Instance.EnemyPositions,
-            Active        = SpatialSystem.Instance.EnemyActive,
-            PlayerPos     = SpatialSystem.Instance.PlayerPosition,
+            Positions = SpatialSystem.Instance.EnemyPositions,
+            Active = SpatialSystem.Instance.EnemyActive,
+            PlayerPos = SpatialSystem.Instance.PlayerPosition,
             DespawnDistSq = DespawnDistance * DespawnDistance,
             PendingDespawn = SpatialSystem.Instance.PendingDespawn
         };
         JobHandle despawnHandle = despawnJob.Schedule(SpatialSystem.MAX_ENEMIES, 64, moveHandle);
 
-        // ── Visual Sync Job ─────────────────────────────────
-        // transform 이동 + flip 방향 계산을 Job 안에서 처리
-        // → LateUpdate에서 spriteRenderer.flipX만 설정 (get_transform 호출 없음)
         var syncJob = new EnemyVisualSyncJob
         {
             EnemyPositions = SpatialSystem.Instance.EnemyPositions,
-            PrevPositions  = SpatialSystem.Instance.ReadOnlyPositions,
-            EnemyActive    = SpatialSystem.Instance.EnemyActive,
-            FlipDirty      = SpatialSystem.Instance.FlipDirty,
-            FlipLeft       = SpatialSystem.Instance.FlipLeft
+            EnemyActive = SpatialSystem.Instance.EnemyActive,
+            EnemyDying = SpatialSystem.Instance.FlipDying,
+            PlayerPos = SpatialSystem.Instance.PlayerPosition,
+            FlipLeft = SpatialSystem.Instance.FlipLeft
         };
-        // despawnHandle에 의존 — Despawn 판정 후 sync
         _lateHandle = syncJob.Schedule(SpatialSystem.Instance.EnemyTransforms, despawnHandle);
 
         if (createdTemp) obstacles.Dispose();
     }
 
-    // -------------------------------------------------------
     void LateUpdate()
     {
-        // Update()에서 스케줄한 모든 Job 완료 대기
         _lateHandle.Complete();
-
         HandleCleanup();
         SyncVisuals();
     }
 
-    // -------------------------------------------------------
-    void HandleSpawning()
+    public void CompleteLateJob()
+    {
+        _lateHandle.Complete();
+    }
+
+    private void HandleSpawning()
     {
         if (StageManager.Instance == null) return;
-        int       currentPhaseIdx = StageManager.Instance.currentPhase;
-        PhaseData phase           = StageManager.Instance.StageData.phaseDatas[currentPhaseIdx];
+        int currentPhaseIdx = StageManager.Instance.currentPhase;
+        PhaseData phase = StageManager.Instance.StageData.phaseDatas[currentPhaseIdx];
 
         _spawnTimer += Time.deltaTime;
         if (_spawnTimer < phase.SpawnInterval) return;
 
         int targetCount = Mathf.Min(phase.maxEnemyCount, SpatialSystem.MAX_ENEMIES);
-        int deficit     = targetCount - _activeIndices.Count;
+        int deficit = targetCount - _activeIndices.Count;
 
-        if (deficit > 0)
+        if (deficit > 0 && phase.enemyDatas != null && phase.enemyDatas.Length > 0)
         {
-            int spawnCount = Mathf.Min(Mathf.Max(deficit / 10, 1), 500);
+            int maxBatch = Mathf.Clamp(deficit / 4, 1, 500);
+            int spawnCount = Random.Range(1, maxBatch + 1);
+
             for (int i = 0; i < spawnCount; i++)
             {
-                EnemyData data = phase.enemyDatas[
-                    UnityEngine.Random.Range(0, phase.enemyDatas.Length)];
+                EnemyData data = phase.enemyDatas[Random.Range(0, phase.enemyDatas.Length)];
                 SpawnEnemy(data);
             }
         }
         _spawnTimer = 0f;
     }
 
-    void SpawnEnemy(EnemyData data)
+    private void HandleEnemyAttacks()
+    {
+        if (PlayerStats.Instance == null || SpatialSystem.Instance == null) return;
+
+        float dt = Time.deltaTime;
+        float2 playerPos = SpatialSystem.Instance.PlayerPosition;
+
+        // 모든 활성 적의 타이머 감소
+        for (int i = 0; i < _activeIndices.Count; i++)
+        {
+            _attackTimers[_activeIndices[i]] -= dt;
+        }
+
+        // 공간 그리드를 사용하여 플레이어 주변의 적들만 검사
+        int2 playerCell = (int2)math.floor(playerPos / SpatialSystem.CELL_SIZE);
+        var grid = SpatialSystem.Instance.SpatialGrid;
+
+        if (!grid.IsCreated) return;
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                int hash = ((playerCell.x + x) * 73856093) ^ ((playerCell.y + y) * 19349663);
+
+                if (grid.TryGetFirstValue(hash, out int enemyIdx, out var it))
+                {
+                    do
+                    {
+                        EnemyEntity enemy = _activeSlots[enemyIdx];
+                        if (enemy == null || enemy.isDying || _attackTimers[enemyIdx] > 0) continue;
+
+                        float2 enemyPos = SpatialSystem.Instance.EnemyPositions[enemyIdx];
+                        float distSq = math.distancesq(playerPos, enemyPos);
+                        float range = enemy.EnemyData.AttackRange;
+
+                        if (distSq <= range * range)
+                        {
+                            PlayerStats.Instance.TakeDamage(enemy.EnemyData.Damage);
+                            _attackTimers[enemyIdx] = enemy.EnemyData.AttackInterval;
+                        }
+                    } while (grid.TryGetNextValue(out enemyIdx, ref it));
+                }
+            }
+        }
+    }
+
+    private void SpawnEnemy(EnemyData data)
     {
         if (enemyPool.Count == 0) return;
 
-        EnemyEntity entity    = enemyPool.Dequeue();
-        Vector2     spawnPos  = (Vector2)playerTransform.position
-                                + UnityEngine.Random.insideUnitCircle.normalized * SpawnRadius;
-        entity.transform.position = spawnPos;
+        EnemyEntity entity = enemyPool.Dequeue();
+        float2 spawnPos = GetRandomSpawnPos();
+        entity.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0);
+        
         entity.gameObject.SetActive(true);
         entity.Init(data);
 
-        int spatialIndex = entity.SpatialIndex;
-        if (spatialIndex == -1)
+        int idx = entity.PoolIndex;
+        if (idx == -1)
         {
             entity.gameObject.SetActive(false);
             enemyPool.Enqueue(entity);
             return;
         }
 
-        // 같은 슬롯에 이미 다른 엔티티가 있으면 교체
-        EnemyEntity oldEntity = _activeSlots[spatialIndex];
-        if (oldEntity != null && oldEntity != entity)
-        {
-            oldEntity.gameObject.SetActive(false);
-            oldEntity.IsActive = false;
-            _activeSlots[spatialIndex] = null;
-            if (_activeIndexSet[spatialIndex])
-            {
-                _activeIndexSet[spatialIndex] = false;
-                _activeIndices.Remove(spatialIndex);
-            }
-            enemyPool.Enqueue(oldEntity);
-        }
+        _activeSlots[idx] = entity;
+        _attackTimers[idx] = 0f; // 공격 타이머 초기화 (즉시 공격 가능 혹은 첫 대기)
 
-        if (GameManager.Instance != null) GameManager.Instance.AddSpawn();
-
-        _activeSlots[spatialIndex] = entity;
-        if (!_activeIndexSet[spatialIndex])
+        if (!_activeIndexSet[idx])
         {
-            _activeIndexSet[spatialIndex] = true;
-            _activeIndices.Add(spatialIndex);
+            _activeIndices.Add(idx);
+            _activeIndexSet[idx] = true;
         }
     }
 
-    // -------------------------------------------------------
-    void HandleCleanup()
+    private float2 GetRandomSpawnPos()
+    {
+        float randomRadius = SpawnRadius + Random.Range(-2f, 3f);
+        float angle = Random.Range(0f, math.PI * 2f);
+        float2 offset = new float2(math.cos(angle), math.sin(angle)) * randomRadius;
+        return SpatialSystem.Instance.PlayerPosition + offset;
+    }
+
+    private void HandleCleanup()
     {
         _toRemove.Clear();
+        var pending = SpatialSystem.Instance.PendingDespawn;
 
         for (int i = 0; i < _activeIndices.Count; i++)
         {
-            int         spatialIdx = _activeIndices[i];
-            EnemyEntity entity     = _activeSlots[spatialIdx];
-
-            if (entity == null
-                || !entity.IsActive
-                || SpatialSystem.Instance.PendingDespawn[spatialIdx])
+            int idx = _activeIndices[i];
+            EnemyEntity entity = _activeSlots[idx];
+            
+            if (entity == null || !entity.IsActive || pending[idx])
             {
-                _toRemove.Add(i);
+                _toRemove.Add(idx);
             }
         }
 
-        // 뒤에서 앞으로 제거 — RemoveAt 인덱스 유지
-        for (int i = _toRemove.Count - 1; i >= 0; i--)
-        {
-            int         listPos    = _toRemove[i];
-            int         spatialIdx = _activeIndices[listPos];
-            EnemyEntity entity     = _activeSlots[spatialIdx];
+        if (_toRemove.Count == 0) return;
 
+        foreach (int idx in _toRemove)
+        {
+            EnemyEntity entity = _activeSlots[idx];
             if (entity != null)
             {
-                entity.gameObject.SetActive(false);
-                entity.IsActive = false;
+                if (entity.gameObject.activeSelf)
+                {
+                    entity.gameObject.SetActive(false);
+                }
                 enemyPool.Enqueue(entity);
             }
+            _activeSlots[idx] = null;
+            _activeIndexSet[idx] = false;
+        }
 
-            _activeSlots[spatialIdx] = null;
-            _activeIndexSet[spatialIdx] = false;
-            _activeIndices.RemoveAt(listPos);
+        _activeIndices.RemoveAll(idx => !_activeIndexSet[idx]);
+    }
+
+    private void SyncVisuals()
+    {
+        var left = SpatialSystem.Instance.FlipLeft;
+
+        for (int i = 0; i < _activeIndices.Count; i++)
+        {
+            int idx = _activeIndices[i];
+            _activeSlots[idx].ApplyVisuals(left[idx]);
         }
     }
 
-    // -------------------------------------------------------
-    // transform 접근 전혀 없음 — spriteRenderer.flipX만 설정
-    void SyncVisuals()
+    private void HandleDyingEnemies()
     {
-        var flipDirty = SpatialSystem.Instance.FlipDirty;
-        var flipLeft  = SpatialSystem.Instance.FlipLeft;
-
-        for (int i = 0; i < _activeIndices.Count; i++)
+        float dt = Time.deltaTime;
+        for (int i = _dyingIndices.Count - 1; i >= 0; i--)
         {
-            int spatialIdx = _activeIndices[i];
+            int idx = _dyingIndices[i];
+            EnemyEntity entity = _activeSlots[idx];
+            
+            if (entity == null || !entity.isDying)
+            {
+                _dyingIndices.RemoveAt(i);
+                continue;
+            }
 
-            // dirty 아니면 즉시 skip — 대부분 직진 중이면 방향 안 바뀜
-            EnemyEntity entity = _activeSlots[spatialIdx];
-            if (entity == null || !entity.IsActive) continue;
-
-            if (flipDirty[spatialIdx])
-                entity.ApplyVisuals(flipLeft[spatialIdx]);
+            entity.DeathTimer -= dt;
+            if (entity.DeathTimer <= 0)
+            {
+                entity.Die();
+                _dyingIndices.RemoveAt(i);
+            }
         }
     }
 }

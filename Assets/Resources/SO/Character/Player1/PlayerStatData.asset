@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f02ad718fb54e3d43a5e252579a71e56, type: 3}
+  m_Name: PlayerStatData
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStatData
+  BaseMoveSpeed: 5
+  BaseDamage: 0
+  BaseExpMultiplier: 1
+  BaseMagnetRadius: 1
+  BaseCooldownReduction: 0
+  MoveSpeedMultiplier: 1
+  DamageMultiplier: 1
+  ExpMultiplier: 1
+  CooldownReduction: 0
+  MagnetRadiusBonus: 0
+  AdditionalDamage: 0
+  AdditionalMoveSpeed: 0

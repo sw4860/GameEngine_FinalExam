@@ -11,6 +11,8 @@ public class EnemyData : ScriptableObject
     public float MoveSpeed;
     public float MaxHp;
     public float AttackRange;
+    public float Damage = 5f;
+    public float AttackInterval = 1f;
     public float ColliderRadius;
     public bool CanNoclip = false;
 }

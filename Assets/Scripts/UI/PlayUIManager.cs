@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class PlayUIManager : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class PlayUIManager : MonoBehaviour
     public TextMeshProUGUI KillCountText;
     public TextMeshProUGUI SpawnCountText;
     public Image PhaseGauge;
+
+    [Header("EXP UI References")]
+    public Image ExpGauge;
+    public TextMeshProUGUI LevelText;
 
     private StageData stageData;
     private PhaseData[] phaseDatas;
@@ -21,33 +26,33 @@ public class PlayUIManager : MonoBehaviour
     void Awake()
     {
         EventManager.OnPhaseChanged += UpdatePhaseData;
+        EventManager.OnLevelUp += UpdateLevelUI;
     }
 
     void Start()
     {
         UpdatePhaseData();
+        UpdateExpUI(true);
     }
 
-    private float _frameDeltaTime = 0.0f;
 
     void Update()
     {
         if (StageManager.Instance == null) return;
 
         elapsedTime = StageManager.Instance.ElapsedTime;
-        _frameDeltaTime += (Time.unscaledDeltaTime - _frameDeltaTime) * 0.1f;
         
         if (TimeText != null)
             TimeText.text = $"{elapsedTime:N2}";
 
-        UpdateUI();
+        UpdateInfoUI();
+        UpdateExpUI(false);
     }
 
-    private void UpdateUI()
+    private void UpdateInfoUI()
     {
         if (stageData == null || phaseDatas == null) return;
 
-        // 현재 페이즈가 마지막인지 확인
         bool isLastPhase = currentPhase >= phaseDatas.Length - 1;
         
         float startTime = phaseDatas[currentPhase].RequiredTime;
@@ -74,11 +79,39 @@ public class PlayUIManager : MonoBehaviour
             
             if (SpawnCountText != null && EnemyManager.Instance != null)
             {
-                float ms = _frameDeltaTime * 1000.0f;
-                float fps = 1.0f / _frameDeltaTime;
-                SpawnCountText.text = $"Active: {EnemyManager.Instance.activeCount} | {ms:N1}ms ({fps:N0} FPS)";
+                SpawnCountText.text = $"Active Enemies: {EnemyManager.Instance.activeCount}";
             }
         }
+    }
+
+    private void UpdateExpUI(bool immediate)
+    {
+        if (PlayerStats.Instance == null) return;
+
+        float targetFill = (float)PlayerStats.Instance.CurrentExp / PlayerStats.Instance.RequiredExp;
+
+        if (ExpGauge != null)
+        {
+            if (immediate)
+            {
+                ExpGauge.fillAmount = targetFill;
+            }
+            else
+            {
+                ExpGauge.DOKill();
+                ExpGauge.DOFillAmount(targetFill, 0.2f).SetUpdate(true);
+            }
+        }
+
+        if (LevelText != null)
+        {
+            LevelText.text = $"Lv. {PlayerStats.Instance.Level}";
+        }
+    }
+
+    private void UpdateLevelUI(int currentLevel)
+    {
+        UpdateExpUI(true);
     }
 
     private void UpdatePhaseData()
@@ -94,5 +127,6 @@ public class PlayUIManager : MonoBehaviour
     void OnDestroy()
     {
         EventManager.OnPhaseChanged -= UpdatePhaseData;
+        EventManager.OnLevelUp -= UpdateLevelUI;
     }
 }

@@ -10,7 +10,7 @@ public class Reposition : MonoBehaviour
     public int gridCount = 2;
 
     [Header("Prop Pooling")]
-    public GameObject[] propPrefabs; // Assign in Inspector
+    public GameObject[] propPrefabs;
     public int propCountPerTile = 3;
     private List<GameObject> myProps = new List<GameObject>();
 
@@ -23,25 +23,14 @@ public class Reposition : MonoBehaviour
 
     void Start()
     {
-        // Pre-create props for this tile
         for (int i = 0; i < propCountPerTile; i++)
         {
             GameObject prop = Instantiate(propPrefabs[Random.Range(0, propPrefabs.Length)], transform);
             
-            // Add Prop component for avoidance
             Prop propScript = prop.GetComponent<Prop>();
             if (propScript == null) propScript = prop.AddComponent<Prop>();
             
-            // Try to set radius based on collider
-            CircleCollider2D circle = prop.GetComponent<CircleCollider2D>();
-            if (circle != null) propScript.Radius = circle.radius * math.max(prop.transform.lossyScale.x, prop.transform.lossyScale.y);
-            else
-            {
-                BoxCollider2D box = prop.GetComponent<BoxCollider2D>();
-                if (box != null) propScript.Radius = math.max(box.size.x, box.size.y) * 0.5f * math.max(prop.transform.lossyScale.x, prop.transform.lossyScale.y);
-                else propScript.Radius = 0.5f; // Default
-            }
-
+            
             prop.SetActive(false);
             myProps.Add(prop);
         }
@@ -86,7 +75,6 @@ public class Reposition : MonoBehaviour
         
         foreach (GameObject prop in myProps)
         {
-            // Randomly decide to show or hide
             bool show = Random.value > 0.5f;
             prop.SetActive(show);
 
