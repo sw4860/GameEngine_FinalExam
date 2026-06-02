@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -21,7 +20,6 @@ public class SpatialSystem : MonoBehaviour
     public NativeArray<float>  EnemySpeeds;
     public NativeArray<float>  EnemyRadii;
     public NativeArray<bool>   PendingDespawn;
-    public NativeArray<bool>   FlipDirty;
     public NativeArray<bool>   FlipLeft;
     public NativeArray<bool>   FlipDying; // 사망 중 상태 추가
     public TransformAccessArray EnemyTransforms;
@@ -49,7 +47,6 @@ public class SpatialSystem : MonoBehaviour
         EnemySpeeds       = new NativeArray<float> (MAX_ENEMIES, Allocator.Persistent);
         EnemyRadii        = new NativeArray<float> (MAX_ENEMIES, Allocator.Persistent);
         PendingDespawn    = new NativeArray<bool>  (MAX_ENEMIES, Allocator.Persistent);
-        FlipDirty         = new NativeArray<bool>  (MAX_ENEMIES, Allocator.Persistent);
         FlipLeft          = new NativeArray<bool>  (MAX_ENEMIES, Allocator.Persistent);
         FlipDying         = new NativeArray<bool>  (MAX_ENEMIES, Allocator.Persistent);
 
@@ -122,29 +119,18 @@ public class SpatialSystem : MonoBehaviour
 
     public static int GetCellHash(float2 pos)
     {
-        int2 cell = (int2)math.floor(pos / CELL_SIZE);
+        return GetCellHash((int2)math.floor(pos / CELL_SIZE));
+    }
+
+    public static int GetCellHash(int2 cell)
+    {
         return (cell.x * 73856093) ^ (cell.y * 19349663);
     }
 
     // ── Jobs ────────────────────────────────────────────────
 
     [BurstCompile]
-    public struct BuildSpatialGridJob : IJobParallelFor
-    {
-        [ReadOnly] public NativeArray<float2> Positions;
-        [ReadOnly] public NativeArray<bool>   Active;
-        public NativeParallelMultiHashMap<int, int>.ParallelWriter Grid;
-
-        public void Execute(int index)
-        {
-            if (!Active[index]) return;
-            int hash = GetCellHash(Positions[index]);
-            Grid.Add(hash, index);
-        }
-    }
-
-    [BurstCompile]
-    public struct BuildExpGridJob : IJobParallelFor
+    public struct BuildGridJob : IJobParallelFor
     {
         [ReadOnly] public NativeArray<float2> Positions;
         [ReadOnly] public NativeArray<bool>   Active;
@@ -168,9 +154,7 @@ public class SpatialSystem : MonoBehaviour
         public void Execute(int index)
         {
             if (index >= Count) return;
-            int2 cell = (int2)math.floor(Obstacles[index].Position / CELL_SIZE);
-            int  hash = (cell.x * 73856093) ^ (cell.y * 19349663);
-            Grid.Add(hash, index);
+            Grid.Add(GetCellHash(Obstacles[index].Position), index);
         }
     }
 
@@ -200,7 +184,6 @@ public class SpatialSystem : MonoBehaviour
         if (EnemySpeeds.IsCreated)       EnemySpeeds.Dispose();
         if (EnemyRadii.IsCreated)        EnemyRadii.Dispose();
         if (PendingDespawn.IsCreated)    PendingDespawn.Dispose();
-        if (FlipDirty.IsCreated)         FlipDirty.Dispose();
         if (FlipLeft.IsCreated)          FlipLeft.Dispose();
         if (FlipDying.IsCreated)         FlipDying.Dispose();
         if (SpatialGrid.IsCreated)       SpatialGrid.Dispose();

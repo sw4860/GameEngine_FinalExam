@@ -117,12 +117,14 @@ public class ExpManager : MonoBehaviour
         if (SpatialSystem.Instance == null) return;
 
         // ── Exp Grid Build Job ──────────────────────────
-        SpatialSystem.Instance.ExpGrid.Clear();
-        var buildGridJob = new SpatialSystem.BuildExpGridJob
+        SpatialSystem spatial = SpatialSystem.Instance;
+
+        spatial.ExpGrid.Clear();
+        var buildGridJob = new SpatialSystem.BuildGridJob
         {
-            Positions = SpatialSystem.Instance.ExpPositions,
-            Active = SpatialSystem.Instance.ExpActive,
-            Grid = SpatialSystem.Instance.ExpGrid.AsParallelWriter()
+            Positions = spatial.ExpPositions,
+            Active = spatial.ExpActive,
+            Grid = spatial.ExpGrid.AsParallelWriter()
         };
         JobHandle gridHandle = buildGridJob.Schedule(SpatialSystem.MAX_EXPS, 64);
 
@@ -132,9 +134,9 @@ public class ExpManager : MonoBehaviour
         {
             var mergeJob = new ExpMergeDetectionJob
             {
-                Positions = SpatialSystem.Instance.ExpPositions,
-                Active = SpatialSystem.Instance.ExpActive,
-                Grid = SpatialSystem.Instance.ExpGrid,
+                Positions = spatial.ExpPositions,
+                Active = spatial.ExpActive,
+                Grid = spatial.ExpGrid,
                 MergeRadiusSq = MergeRadius * MergeRadius,
                 CellSize = SpatialSystem.CELL_SIZE,
                 MergeTargets = _mergeTargets
@@ -152,10 +154,10 @@ public class ExpManager : MonoBehaviour
 
         var collectJob = new ExpMagnetJob
         {
-            Positions = SpatialSystem.Instance.ExpPositions,
-            Active = SpatialSystem.Instance.ExpActive,
-            Collected = SpatialSystem.Instance.ExpCollected,
-            PlayerPos = SpatialSystem.Instance.PlayerPosition,
+            Positions = spatial.ExpPositions,
+            Active = spatial.ExpActive,
+            Collected = spatial.ExpCollected,
+            PlayerPos = spatial.PlayerPosition,
             DeltaTime = Time.deltaTime,
             MagnetRadiusSq = currentMagnetRadius * currentMagnetRadius,
             CollectRadiusSq = CollectRadius * CollectRadius,
@@ -168,11 +170,11 @@ public class ExpManager : MonoBehaviour
         // ── Visual Sync Job ─────────────────────────────
         var syncJob = new ExpVisualSyncJob
         {
-            Positions = SpatialSystem.Instance.ExpPositions,
-            Active = SpatialSystem.Instance.ExpActive
+            Positions = spatial.ExpPositions,
+            Active = spatial.ExpActive
         };
 
-        _lateHandle = syncJob.Schedule(SpatialSystem.Instance.ExpTransforms, collectHandle);
+        _lateHandle = syncJob.Schedule(spatial.ExpTransforms, collectHandle);
     }
 
     private void TryMergeExpGems()
@@ -285,7 +287,7 @@ public class ExpManager : MonoBehaviour
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    int hash = ((cell.x + x) * 73856093) ^ ((cell.y + y) * 19349663);
+                    int hash = SpatialSystem.GetCellHash(new int2(cell.x + x, cell.y + y));
                     if (Grid.TryGetFirstValue(hash, out int idxB, out var it))
                     {
                         do

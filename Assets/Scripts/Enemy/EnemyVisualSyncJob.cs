@@ -21,7 +21,8 @@ public struct EnemyVisualSyncJob : IJobParallelForTransform
 
         float2 curr = EnemyPositions[index];
         
-        transform.position = new Vector3(curr.x, curr.y, curr.y * 0.001f);
+        float z = math.max(0f, curr.y * 0.001f);
+        transform.position = new Vector3(curr.x, curr.y, z);
 
         FlipLeft[index] = curr.x > PlayerPos.x;
     }

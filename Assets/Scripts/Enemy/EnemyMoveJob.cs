@@ -48,7 +48,7 @@ public struct EnemyMoveJob : IJobParallelFor
         {
             for (int y = -1; y <= 1; y++)
             {
-                int hash = ( (cell.x + x) * 73856093) ^ ((cell.y + y) * 19349663);
+                int hash = SpatialSystem.GetCellHash(new int2(cell.x + x, cell.y + y));
                 
                 if (SpatialGrid.TryGetFirstValue(hash, out int otherIndex, out var itEnemy))
                 {

@@ -11,7 +11,6 @@ public class EnemyEntity : MonoBehaviour
     [HideInInspector] public bool isDying; 
     public float DeathTimer; 
 
-    private float _attackTimer;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private MaterialPropertyBlock propBlock;
@@ -103,7 +102,7 @@ public class EnemyEntity : MonoBehaviour
     {
         if (flashTween != null) flashTween.Kill();
 
-        float flashAmount = 5.0f;
+        float flashAmount = 3.0f;
         
         flashTween = DOTween.To(() => flashAmount, x => {
             flashAmount = x;

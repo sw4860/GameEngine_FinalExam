@@ -97,7 +97,7 @@ public class AuraSkillData : SkillData
         {
             for (int y = startY; y <= endY; y++)
             {
-                int hash = (x * 73856093) ^ (y * 19349663);
+                int hash = SpatialSystem.GetCellHash(new int2(x, y));
                 if (grid.TryGetFirstValue(hash, out int enemyIndex, out var it))
                 {
                     do

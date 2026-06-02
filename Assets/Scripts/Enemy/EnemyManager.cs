@@ -86,14 +86,15 @@ public class EnemyManager : MonoBehaviour
         HandleDyingEnemies();
         HandleEnemyAttacks();
 
-        SpatialSystem.Instance.UpdateReadOnlyPositions();
+        SpatialSystem spatial = SpatialSystem.Instance;
+        spatial.UpdateReadOnlyPositions();
 
-        SpatialSystem.Instance.SpatialGrid.Clear();
-        var buildGridJob = new SpatialSystem.BuildSpatialGridJob
+        spatial.SpatialGrid.Clear();
+        var buildGridJob = new SpatialSystem.BuildGridJob
         {
-            Positions = SpatialSystem.Instance.ReadOnlyPositions,
-            Active    = SpatialSystem.Instance.EnemyActive,
-            Grid      = SpatialSystem.Instance.SpatialGrid.AsParallelWriter()
+            Positions = spatial.ReadOnlyPositions,
+            Active    = spatial.EnemyActive,
+            Grid      = spatial.SpatialGrid.AsParallelWriter()
         };
         JobHandle buildHandle = buildGridJob.Schedule(SpatialSystem.MAX_ENEMIES, 64);
 
@@ -107,7 +108,7 @@ public class EnemyManager : MonoBehaviour
             obstacles = ObstacleManager.Instance.ObstacleDatas;
             obsCount = ObstacleManager.Instance.GetActiveCount();
             
-            SpatialSystem.Instance.ObstacleGrid.Clear();
+            spatial.ObstacleGrid.Clear();
         }
         else
         {
@@ -117,14 +118,14 @@ public class EnemyManager : MonoBehaviour
 
         var moveJob = new EnemyMoveJob
         {
-            PlayerPos = SpatialSystem.Instance.PlayerPosition,
+            PlayerPos = spatial.PlayerPosition,
             DeltaTime = Time.deltaTime,
-            EnemyPositions = SpatialSystem.Instance.EnemyPositions,
-            ReadOnlyEnemyPositions = SpatialSystem.Instance.ReadOnlyPositions,
-            EnemyActive = SpatialSystem.Instance.EnemyActive,
-            EnemySpeeds = SpatialSystem.Instance.EnemySpeeds,
-            EnemyRadii = SpatialSystem.Instance.EnemyRadii,
-            SpatialGrid = SpatialSystem.Instance.SpatialGrid,
+            EnemyPositions = spatial.EnemyPositions,
+            ReadOnlyEnemyPositions = spatial.ReadOnlyPositions,
+            EnemyActive = spatial.EnemyActive,
+            EnemySpeeds = spatial.EnemySpeeds,
+            EnemyRadii = spatial.EnemyRadii,
+            SpatialGrid = spatial.SpatialGrid,
             Obstacles = obstacles,
             ObstacleCount = obsCount,
             SeparationWeight = SeparationWeight,
@@ -134,23 +135,23 @@ public class EnemyManager : MonoBehaviour
 
         var despawnJob = new SpatialSystem.DespawnMarkJob
         {
-            Positions = SpatialSystem.Instance.EnemyPositions,
-            Active = SpatialSystem.Instance.EnemyActive,
-            PlayerPos = SpatialSystem.Instance.PlayerPosition,
+            Positions = spatial.EnemyPositions,
+            Active = spatial.EnemyActive,
+            PlayerPos = spatial.PlayerPosition,
             DespawnDistSq = DespawnDistance * DespawnDistance,
-            PendingDespawn = SpatialSystem.Instance.PendingDespawn
+            PendingDespawn = spatial.PendingDespawn
         };
         JobHandle despawnHandle = despawnJob.Schedule(SpatialSystem.MAX_ENEMIES, 64, moveHandle);
 
         var syncJob = new EnemyVisualSyncJob
         {
-            EnemyPositions = SpatialSystem.Instance.EnemyPositions,
-            EnemyActive = SpatialSystem.Instance.EnemyActive,
-            EnemyDying = SpatialSystem.Instance.FlipDying,
-            PlayerPos = SpatialSystem.Instance.PlayerPosition,
-            FlipLeft = SpatialSystem.Instance.FlipLeft
+            EnemyPositions = spatial.EnemyPositions,
+            EnemyActive = spatial.EnemyActive,
+            EnemyDying = spatial.FlipDying,
+            PlayerPos = spatial.PlayerPosition,
+            FlipLeft = spatial.FlipLeft
         };
-        _lateHandle = syncJob.Schedule(SpatialSystem.Instance.EnemyTransforms, despawnHandle);
+        _lateHandle = syncJob.Schedule(spatial.EnemyTransforms, despawnHandle);
 
         if (createdTemp) obstacles.Dispose();
     }
@@ -216,7 +217,7 @@ public class EnemyManager : MonoBehaviour
         {
             for (int y = -1; y <= 1; y++)
             {
-                int hash = ((playerCell.x + x) * 73856093) ^ ((playerCell.y + y) * 19349663);
+                int hash = SpatialSystem.GetCellHash(new int2(playerCell.x + x, playerCell.y + y));
 
                 if (grid.TryGetFirstValue(hash, out int enemyIdx, out var it))
                 {
