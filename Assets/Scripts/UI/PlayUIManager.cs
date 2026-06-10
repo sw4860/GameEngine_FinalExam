@@ -11,6 +11,7 @@ public class PlayUIManager : MonoBehaviour
     public TextMeshProUGUI KillCountText;
     public TextMeshProUGUI SpawnCountText;
     public Image PhaseGauge;
+    public Image HpGauge;
 
     [Header("EXP UI References")]
     public Image ExpGauge;
@@ -27,12 +28,14 @@ public class PlayUIManager : MonoBehaviour
     {
         EventManager.OnPhaseChanged += UpdatePhaseData;
         EventManager.OnLevelUp += UpdateLevelUI;
+        EventManager.OnPlayerHpChanged += UpdatePlayerHpUI;
     }
 
     void Start()
     {
         UpdatePhaseData();
         UpdateExpUI(true);
+        UpdatePlayerHpUI();
     }
 
 
@@ -124,9 +127,15 @@ public class PlayUIManager : MonoBehaviour
         nextPhase = StageManager.Instance.NextPhase;
     }
 
+    private void UpdatePlayerHpUI()
+    {
+        HpGauge.fillAmount = PlayerStats.Instance.CurrentHp / PlayerStats.Instance.MaxHp;
+    }
+
     void OnDestroy()
     {
         EventManager.OnPhaseChanged -= UpdatePhaseData;
         EventManager.OnLevelUp -= UpdateLevelUI;
+        EventManager.OnPlayerHpChanged -= UpdatePlayerHpUI;
     }
 }

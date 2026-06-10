@@ -25,7 +25,6 @@ public class PlayerStats : MonoBehaviour
         {
             Instance = this;
             InitializeStats();
-            CurrentHp = MaxHp;
         }
         else
         {
@@ -36,14 +35,16 @@ public class PlayerStats : MonoBehaviour
     public void Heal(float amount)
     {
         CurrentHp = Mathf.Min(CurrentHp + amount, MaxHp);
+        EventManager.OnPlayerHpChanged?.Invoke();
     }
 
     public void TakeDamage(float damage)
     {
         CurrentHp -= damage;
+        EventManager.OnPlayerHpChanged?.Invoke();
         if (CurrentHp <= 0)
         {
-            Debug.Log("Death");
+            EventManager.OnPlayerDeath?.Invoke();
         }
     }
 
@@ -67,6 +68,8 @@ public class PlayerStats : MonoBehaviour
             }
 
             PlayerSkillManager.Instance.MaxSkillSlots = CharacterData.MaxSkillSlots;
+            MaxHp = CharacterData.BaseStats.BaseMaxHp;
+            CurrentHp = MaxHp;
             ApplyCharacterVisuals();
         }
         

@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerStatData : ScriptableObject
 {
     [Header("Base Stats")]
+    public float BaseMaxHp = 100f;
     public float BaseMoveSpeed = 5f;
     public float BaseDamage = 10f;
     public float BaseExpMultiplier = 1f;

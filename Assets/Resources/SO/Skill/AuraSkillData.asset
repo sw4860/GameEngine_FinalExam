@@ -19,12 +19,32 @@ MonoBehaviour:
   AuraPrefab: {fileID: 0}
   Levels:
   - Damage: 1
-    Radius: 3
+    Radius: 2.5
     Interval: 0.75
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1.25
+    Radius: 3
+    Interval: 0.7
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1.5
+    Radius: 3.25
+    Interval: 0.65
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 2
+    Radius: 3.5
+    Interval: 0.6
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 2.5
+    Radius: 3.75
+    Interval: 0.5
     StatModifiers: []
     LevelDescription: 
   - Damage: 3
     Radius: 4
-    Interval: 0.6
+    Interval: 0.3
     StatModifiers: []
     LevelDescription: 
