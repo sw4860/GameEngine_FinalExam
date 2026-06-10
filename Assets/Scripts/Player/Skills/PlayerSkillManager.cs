@@ -53,7 +53,6 @@ public class PlayerSkillManager : MonoBehaviour
         string targetName = string.IsNullOrEmpty(skillSO.SkillName) ? skillSO.name : skillSO.SkillName;
         return _activeSkills.Find(s => {
             string currentName = string.IsNullOrEmpty(s.SkillName) ? s.name : s.SkillName;
-            // 인스턴스화된 경우 (Clone)이 붙을 수 있으므로 주의 (하지만 보통 SkillName 필드를 사용하므로 안전함)
             return currentName == targetName;
         });
     }

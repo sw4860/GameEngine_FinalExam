@@ -261,7 +261,7 @@ public class EnemyManager : MonoBehaviour
         }
 
         _activeSlots[idx] = entity;
-        _attackTimers[idx] = 0f; // 공격 타이머 초기화 (즉시 공격 가능 혹은 첫 대기)
+        _attackTimers[idx] = 0f;
 
         if (!_activeIndexSet[idx])
         {

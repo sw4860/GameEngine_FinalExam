@@ -72,10 +72,10 @@ public class PlayUIManager : MonoBehaviour
             PhaseGauge.fillAmount = duration > 0 ? Mathf.Clamp01((elapsedTime - startTime) / duration) : 1f;
         }
 
-        if (GameManager.Instance != null)
+        if (GameDataManager.Instance != null)
         {
             if (KillCountText != null)
-                KillCountText.text = $"Kills: {GameManager.Instance.SessionKillCount}";
+                KillCountText.text = $"Kills: {GameDataManager.Instance.SessionKillCount}";
             
             if (SpawnCountText != null && EnemyManager.Instance != null)
             {

@@ -32,7 +32,7 @@ public class FallbackRewardSkillData : SkillData
                 PlayerStats.Instance.Heal(Amount);
                 break;
             case RewardType.Gold:
-                GameManager.Instance.AddGold((int)Amount);
+                GameDataManager.Instance.AddGold((int)Amount);
                 break;
         }
     }

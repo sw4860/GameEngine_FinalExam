@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameDataManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameDataManager Instance;
 
     public GameData CurrentData;
     public int SessionKillCount;

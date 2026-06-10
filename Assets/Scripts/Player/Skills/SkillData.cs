@@ -46,10 +46,7 @@ public abstract class SkillData : ScriptableObject
 
     public virtual void OnLevelUp(GameObject owner) 
     { 
-        if (CurrentLevel < MaxLevel)
-        {
-            CurrentLevel++;
-        }
+        if (CurrentLevel < MaxLevel) { CurrentLevel++; }
     }
     
     public abstract string GetLevelUpDescription();
@@ -90,7 +87,7 @@ public abstract class SkillData : ScriptableObject
                     case StatType.MoveSpeed: stats.MoveSpeedMultiplier += modifier.Value; break;
                     case StatType.ExpMultiplier: stats.ExpMultiplier += modifier.Value; break;
                     case StatType.CooldownReduction: stats.CooldownReduction += modifier.Value; break;
-                    case StatType.MagnetRadius: stats.MagnetRadiusBonus += modifier.Value; break; // Percentage of radius? (Not implemented in StatData yet, but keeping for consistency)
+                    case StatType.MagnetRadius: stats.MagnetRadiusBonus += modifier.Value; break;
                 }
             }
             else
@@ -100,7 +97,6 @@ public abstract class SkillData : ScriptableObject
                     case StatType.Damage: stats.AdditionalDamage += modifier.Value; break;
                     case StatType.MoveSpeed: stats.AdditionalMoveSpeed += modifier.Value; break;
                     case StatType.CooldownReduction: stats.CooldownReduction += modifier.Value; break;
-                    case StatType.MagnetRadius: stats.MagnetRadiusBonus += modifier.Value; break;
                     case StatType.ExpMultiplier: stats.ExpMultiplier += modifier.Value; break;
                 }
             }

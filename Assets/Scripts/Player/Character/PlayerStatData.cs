@@ -15,7 +15,7 @@ public class PlayerStatData : ScriptableObject
     public float DamageMultiplier = 1f;
     public float ExpMultiplier = 1f;
     public float CooldownReduction = 0f;
-    public float MagnetRadiusBonus = 0f;
+    public float MagnetRadiusBonus = 1f;
 
     [Header("Runtime Modifiers (Additions)")]
     public float AdditionalDamage = 0f;
@@ -24,7 +24,7 @@ public class PlayerStatData : ScriptableObject
     public float CurrentMoveSpeed => (BaseMoveSpeed + AdditionalMoveSpeed) * MoveSpeedMultiplier;
     public float CurrentDamage => (BaseDamage + AdditionalDamage) * DamageMultiplier;
     public float CurrentExpMultiplier => BaseExpMultiplier * ExpMultiplier;
-    public float CurrentMagnetRadius => BaseMagnetRadius + MagnetRadiusBonus;
+    public float CurrentMagnetRadius => BaseMagnetRadius * MagnetRadiusBonus;
     public float CurrentCooldownReduction => Mathf.Clamp(BaseCooldownReduction + CooldownReduction, 0f, 0.9f);
 
     public void ResetModifiers()
@@ -33,7 +33,7 @@ public class PlayerStatData : ScriptableObject
         DamageMultiplier = 1f;
         ExpMultiplier = 1f;
         CooldownReduction = 0f;
-        MagnetRadiusBonus = 0f;
+        MagnetRadiusBonus = 1f;
         AdditionalDamage = 0f;
         AdditionalMoveSpeed = 0f;
     }

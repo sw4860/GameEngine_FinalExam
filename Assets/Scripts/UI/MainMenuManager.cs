@@ -15,4 +15,9 @@ public class MainMenuManager : MonoBehaviour
     {
         SceneTransitionManager.Instance.LoadScene("GameScene");
     }
+
+    private void OnDestroy()
+    {
+        GameStartButton.onClick.RemoveListener(OnGameStart);
+    }
 }

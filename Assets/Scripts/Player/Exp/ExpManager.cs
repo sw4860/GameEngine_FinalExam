@@ -71,7 +71,6 @@ public class ExpManager : MonoBehaviour
         ExpEntity entity = go.GetComponent<ExpEntity>();
         if (entity == null) entity = go.AddComponent<ExpEntity>();
 
-        // 초기화 시점에 고정 인덱스 부여 및 트랜스폼 바인딩 (1회)
         entity.SpatialIndex = index;
         SpatialSystem.Instance.SetExpTransform(index, go.transform);
 
@@ -86,12 +85,11 @@ public class ExpManager : MonoBehaviour
 
         _lateHandle.Complete();
 
-        if (_expPool.Count == 0) return; // 풀 부족 시 스폰 불가 (최적화)
+        if (_expPool.Count == 0) return;
 
         ExpEntity entity = _expPool.Dequeue();
         int index = entity.SpatialIndex;
 
-        // 런타임에는 데이터만 활성화 (트랜스폼 교체 없음)
         SpatialSystem.Instance.ActivateExp(index, pos, expValue);
 
         Sprite sprite = GetSpriteForValue(expValue);
@@ -183,13 +181,11 @@ public class ExpManager : MonoBehaviour
 
         _mergeJobHandle.Complete();
 
-        // 높은 인덱스가 낮은 인덱스로 병합되므로, 역순으로 처리하면 체인 병합(A->B->C)이 한 프레임에 해결됨
         for (int i = SpatialSystem.MAX_EXPS - 1; i >= 0; i--)
         {
             int targetIdx = _mergeTargets[i];
             if (targetIdx != -1)
             {
-                // i(높은 인덱스)가 targetIdx(낮은 인덱스)로 흡수됨
                 SpatialSystem.Instance.ExpValues[targetIdx] += SpatialSystem.Instance.ExpValues[i];
                 SpatialSystem.Instance.DeactivateExp(i);
 
@@ -201,7 +197,6 @@ public class ExpManager : MonoBehaviour
                     _expPool.Enqueue(entity);
                 }
 
-                // 타겟의 비주얼 업데이트 (중복 호출될 수 있으나 안전함)
                 if (_activeSlots[targetIdx] != null)
                 {
                     _activeSlots[targetIdx].UpdateSprite(GetSpriteForValue(SpatialSystem.Instance.ExpValues[targetIdx]));
@@ -223,7 +218,6 @@ public class ExpManager : MonoBehaviour
 
         HandleCollection();
 
-        // 한 번에 죽은 인덱스 정리 (O(N))
         _activeIndices.RemoveAll(idx => !SpatialSystem.Instance.ExpActive[idx]);
     }
 
@@ -236,7 +230,6 @@ public class ExpManager : MonoBehaviour
         for (int i = 0; i < _activeIndices.Count; i++)
         {
             int idx = _activeIndices[i];
-            // 병합으로 이미 죽은 녀석은 건너뜀
             if (!activeArray[idx]) continue;
 
             if (collectedArray[idx])
@@ -247,7 +240,6 @@ public class ExpManager : MonoBehaviour
                     PlayerStats.Instance.AddExp(expValue);
                 }
 
-                // 수집된 경험치 해제 및 반납
                 SpatialSystem.Instance.DeactivateExp(idx);
 
                 ExpEntity entity = _activeSlots[idx];
@@ -292,14 +284,12 @@ public class ExpManager : MonoBehaviour
                     {
                         do
                         {
-                            // 자기 자신 제외 및 활성 체크
-                            // 인덱스가 낮은 쪽이 흡수하는 규칙 (A가 B보다 크면 A가 B로 들어감)
                             if (idxA <= idxB || !Active[idxB]) continue;
 
                             if (math.distancesq(posA, Positions[idxB]) < MergeRadiusSq)
                             {
                                 MergeTargets[idxA] = idxB;
-                                return; // 하나만 찾아도 됨
+                                return;
                             }
                         } while (Grid.TryGetNextValue(out idxB, ref it));
                     }
