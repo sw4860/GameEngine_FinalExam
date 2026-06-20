@@ -4,7 +4,7 @@ using UnityEngine;
 public class UpgradeManager : MonoBehaviour
 {
     public static UpgradeManager Instance;
-    public List<SkillData> AllSkills;
+    [HideInInspector] public List<SkillData> AllSkills;
     public UpgradeUIManager UpgradeUI;
     
     [Header("Fallback Rewards")]

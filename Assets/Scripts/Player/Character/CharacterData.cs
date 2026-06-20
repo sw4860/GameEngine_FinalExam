@@ -9,4 +9,9 @@ public class CharacterData : ScriptableObject
     public PlayerStatData BaseStats;
     public SkillData BaseSkill;
     public int MaxSkillSlots = 6;
+
+    [Header("Unlock Settings")]
+    public bool IsDefaultUnlocked = false;
+    public int UnlockGoldCost = 0;
+    public string UnlockAchievementId = ""; // 비어있지 않으면 해당 업적이 해금되었을 때만 사용 가능
 }

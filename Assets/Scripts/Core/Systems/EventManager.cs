@@ -1,8 +1,8 @@
 using System;
-using UnityEngine;
 
-public class EventManager : MonoBehaviour
+public class EventManager
 {
+    public static Action OnGameClear;
     public static Action OnPhaseChanged;
     public static Action OnEnemyDeath;
     public static Action OnPlayerDeath;

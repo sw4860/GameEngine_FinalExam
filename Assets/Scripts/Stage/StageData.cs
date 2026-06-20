@@ -21,6 +21,12 @@ public class PhaseData
 [CreateAssetMenu(fileName = "StageData", menuName = "StageData")]
 public class StageData : ScriptableObject
 {
+    [Header("Lobby Settings")]
+    public string StageName = "New Stage";
+    [TextArea] public string Description;
+    public Sprite Thumbnail;
+
+    [Header("Stage Settings")]
     public PhaseData[] phaseDatas;
     public float EndTime = 300.0f;
 }

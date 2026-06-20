@@ -14,8 +14,7 @@ public class EnemyEntity : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     private MaterialPropertyBlock propBlock;
-    private Tween flashTween;
-    private static readonly int ColorAnimHash = Shader.PropertyToID("_Color");
+    private static readonly int FlashHash = Shader.PropertyToID("_Flash");
 
     void Awake()
     {
@@ -34,7 +33,6 @@ public class EnemyEntity : MonoBehaviour
         this.EnemyData = data;
         this.CurrentHp = data.MaxHp;
 
-        if (flashTween != null) flashTween.Kill();
         ResetFlash();
 
         SpatialSystem.Instance.ActivateEnemy(
@@ -71,7 +69,10 @@ public class EnemyEntity : MonoBehaviour
 
         if (animator != null && animator.runtimeAnimatorController != null)
         {
-            PlayFlashEffect();
+            if (EnemyManager.Instance != null)
+            {
+                EnemyManager.Instance.TriggerFlash(PoolIndex);
+            }
 
             if (CurrentHp <= 0)
             {
@@ -98,29 +99,18 @@ public class EnemyEntity : MonoBehaviour
         }
     }
 
-    private void PlayFlashEffect()
-    {
-        if (flashTween != null) flashTween.Kill();
-
-        float flashAmount = 3.0f;
-        
-        flashTween = DOTween.To(() => flashAmount, x => {
-            flashAmount = x;
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.GetPropertyBlock(propBlock);
-                propBlock.SetColor(ColorAnimHash, new Color(x, x, x, 1));
-                spriteRenderer.SetPropertyBlock(propBlock);
-            }
-        }, 1.0f, 0.1f).SetEase(Ease.OutQuad);
-    }
-
-    private void ResetFlash()
+    public void SetFlash(float value)
     {
         if (spriteRenderer == null) return;
-        spriteRenderer.GetPropertyBlock(propBlock);
-        propBlock.SetColor(ColorAnimHash, Color.white);
+        propBlock.SetFloat(FlashHash, value);
         spriteRenderer.SetPropertyBlock(propBlock);
+    }
+
+    public void ResetFlash()
+    {
+        if (spriteRenderer == null) return;
+        // PropertyBlock을 null로 설정하여 개별 속성을 해제하고 배칭(Batching)에 복귀시킵니다.
+        spriteRenderer.SetPropertyBlock(null);
     }
 
     public void Die()
@@ -142,14 +132,12 @@ public class EnemyEntity : MonoBehaviour
             SpatialSystem.Instance.FlipDying[PoolIndex] = false;
         }
 
-        if (flashTween != null) flashTween.Kill();
         SpatialSystem.Instance.DeactivateEnemy(PoolIndex);
         gameObject.SetActive(false); 
     }
 
     void OnDisable()
     {
-        if (flashTween != null) flashTween.Kill();
         if (PoolIndex != -1 && SpatialSystem.Instance != null)
         {
             SpatialSystem.Instance.DeactivateEnemy(PoolIndex);

@@ -5,19 +5,33 @@ public class StageManager : MonoBehaviour
     public static StageManager Instance;
     public StageData StageData;
     public float ElapsedTime;
-    public int NextPhase = 0;
     public int currentPhase = 0;
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else if (Instance != this) Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            
+            // 로비에서 선택한 스테이지 정보를 동적으로 로드
+            if (GameDataManager.Instance != null && !string.IsNullOrEmpty(GameDataManager.Instance.CurrentData.SelectedStageName))
+            {
+                StageData selectedStage = Resources.Load<StageData>("SO/StageDatas/" + GameDataManager.Instance.CurrentData.SelectedStageName);
+                if (selectedStage != null)
+                {
+                    StageData = selectedStage;
+                }
+            }
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
     {
         ElapsedTime = 0.0f;
-        NextPhase = 0;
     }
 
     void Update()
@@ -30,9 +44,13 @@ public class StageManager : MonoBehaviour
             if (ElapsedTime >= StageData.phaseDatas[currentPhase + 1].RequiredTime)
             {
                 currentPhase++;
-                NextPhase = currentPhase + 1;
                 EventManager.OnPhaseChanged?.Invoke();
             }
+        }
+        else if (ElapsedTime >= StageData.EndTime)
+        {
+            ElapsedTime = StageData.EndTime;
+            EventManager.OnGameClear?.Invoke();
         }
     }
 }

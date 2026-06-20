@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b7283245c5bbf840a80543bc675f814, type: 3}
+  m_Name: Magnet Increase
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyUpgradeData
+  TargetStat: 3
+  UpgradeName: "\uD68D\uB4DD \uBC94\uC704 \uC99D\uAC00"
+  Description: "\uC624\uBE0C\uC81D\uD2B8\uB4E4\uC758 \uD68D\uB4DD \uBC94\uC704 \uC99D\uAC00"
+  Icon: {fileID: 1997828774, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
+  IsPercentage: 1
+  InvertSignInUI: 0
+  LevelCosts: 64000000780000008c000000a0000000b4000000c8000000
+  StatBonuses:
+  - 1
+  - 1.5
+  - 2
+  - 2.5
+  - 3
+  - 4
+  - 5

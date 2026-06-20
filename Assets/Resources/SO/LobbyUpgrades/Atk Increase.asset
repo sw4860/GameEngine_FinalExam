@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b7283245c5bbf840a80543bc675f814, type: 3}
+  m_Name: Atk Increase
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyUpgradeData
+  UpgradeID: Damage
+  UpgradeName: "\uACF5\uACA9\uB825 \uC99D\uAC00"
+  Description: "\uAE30\uBCF8 \uACF5\uACA9\uB825 \uC99D\uAC00"
+  Icon: {fileID: 5682877175833816285, guid: 46e97ed3fd217ad4e98ed006210d5323, type: 3}
+  LevelCosts: c8000000dc000000f000000004010000180100002c010000
+  StatBonuses:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6

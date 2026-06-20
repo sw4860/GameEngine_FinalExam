@@ -33,6 +33,10 @@ public class EnemyManager : MonoBehaviour
     public float DespawnDistance = 25f;
 
     private float[] _attackTimers;
+    private float[] _flashTimers;
+    private bool[] _isFlashing;
+    private List<int> _flashingIndices;
+    private const float FLASH_DURATION = 0.1f;
 
     void Awake()
     {
@@ -43,6 +47,10 @@ public class EnemyManager : MonoBehaviour
             _activeIndices = new List<int>(SpatialSystem.MAX_ENEMIES);
             _activeIndexSet = new bool[SpatialSystem.MAX_ENEMIES];
             _attackTimers = new float[SpatialSystem.MAX_ENEMIES];
+
+            _flashTimers = new float[SpatialSystem.MAX_ENEMIES];
+            _isFlashing = new bool[SpatialSystem.MAX_ENEMIES];
+            _flashingIndices = new List<int>(SpatialSystem.MAX_ENEMIES);
         }
         else
         {
@@ -156,10 +164,53 @@ public class EnemyManager : MonoBehaviour
         if (createdTemp) obstacles.Dispose();
     }
 
+    public void TriggerFlash(int index)
+    {
+        if (index < 0 || index >= SpatialSystem.MAX_ENEMIES) return;
+        _flashTimers[index] = FLASH_DURATION;
+        if (!_isFlashing[index])
+        {
+            _flashingIndices.Add(index);
+            _isFlashing[index] = true;
+        }
+    }
+
+    private void UpdateFlashing()
+    {
+        float dt = Time.deltaTime;
+        for (int i = _flashingIndices.Count - 1; i >= 0; i--)
+        {
+            int idx = _flashingIndices[i];
+            EnemyEntity entity = _activeSlots[idx];
+
+            if (entity == null || !entity.IsActive)
+            {
+                _isFlashing[idx] = false;
+                _flashingIndices.RemoveAt(i);
+                continue;
+            }
+
+            _flashTimers[idx] -= dt;
+            if (_flashTimers[idx] <= 0f)
+            {
+                entity.ResetFlash();
+                _isFlashing[idx] = false;
+                _flashingIndices.RemoveAt(i);
+            }
+            else
+            {
+                float progress = _flashTimers[idx] / FLASH_DURATION;
+                float flashVal = progress * progress; // Ease Out Quad
+                entity.SetFlash(flashVal);
+            }
+        }
+    }
+
     void LateUpdate()
     {
         _lateHandle.Complete();
         HandleCleanup();
+        UpdateFlashing();
         SyncVisuals();
     }
 

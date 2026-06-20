@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e12cc03149f2c3a49acef42ce9430fb6, type: 3}
   m_Name: StageData
   m_EditorClassIdentifier: Assembly-CSharp::StageData
+  StageName: "\uCD08\uC6D0"
+  Description: "\uAE30\uBCF8 \uCD08\uC6D0"
+  Thumbnail: {fileID: 21300000, guid: 1811111434d1e7543a3997528a00108f, type: 3}
   phaseDatas:
   - RequiredTime: 0
     maxEnemyCount: 10

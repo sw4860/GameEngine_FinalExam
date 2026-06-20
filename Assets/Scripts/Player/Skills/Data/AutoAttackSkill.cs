@@ -33,7 +33,8 @@ public class AutoAttackSkill : SkillData
     {
         _timer += Time.deltaTime;
 
-        if (_timer >= CurrentLevelData.Cooldown)
+        float actualCooldown = GetModifiedCooldown(CurrentLevelData.Cooldown);
+        if (_timer >= actualCooldown)
         {
             if (TryAttack(owner))
             {

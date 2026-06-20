@@ -111,6 +111,7 @@ MonoBehaviour:
   IsActive: 0
   isDying: 0
   DeathTimer: 0
+  FlashMaterial: {fileID: 2100000, guid: b3dc0f2f8d2415d41be4f33bb7391361, type: 2}
 --- !u!95 &7213050942848526663
 Animator:
   serializedVersion: 7

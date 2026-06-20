@@ -7,7 +7,8 @@ public enum StatType
     MoveSpeed,
     CooldownReduction,
     MagnetRadius,
-    ExpMultiplier
+    ExpMultiplier,
+    MaxHp
 }
 
 public enum ModifierMode
@@ -101,5 +102,17 @@ public abstract class SkillData : ScriptableObject
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 플레이어의 쿨타임 감소(CDR) 스탯을 적용한 최종 Cooldown을 반환합니다.
+    /// </summary>
+    protected float GetModifiedCooldown(float baseCooldown)
+    {
+        if (PlayerStats.Instance != null && PlayerStats.Instance.StatData != null)
+        {
+            return baseCooldown * (1f - PlayerStats.Instance.StatData.CurrentCooldownReduction);
+        }
+        return baseCooldown;
     }
 }

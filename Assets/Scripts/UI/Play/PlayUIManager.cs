@@ -1,0 +1,161 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
+
+public class PlayUIManager : MonoBehaviour
+{
+    [Header("Info UI")]
+    public TextMeshProUGUI TimeText;
+    public TextMeshProUGUI NextPhaseInfoText;
+    public TextMeshProUGUI KillCountText;
+    public TextMeshProUGUI SpawnCountText;
+    public Image PhaseGauge;
+    public Image HpGauge;
+
+    [Header("EXP UI")]
+    public Image ExpGauge;
+    public TextMeshProUGUI LevelText;
+
+    [Header("Clear UI")]
+    public GameObject ClearPanel;
+
+    [Header("GameOver UI")]
+    public GameObject GameOverPanel;
+
+    private StageData stageData;
+    private PhaseData[] phaseDatas;
+    private int currentPhase;
+    private float elapsedTime;
+
+    void Awake()
+    {
+        EventManager.OnPhaseChanged += UpdatePhaseData;
+        EventManager.OnLevelUp += UpdateLevelUI;
+        EventManager.OnPlayerHpChanged += UpdatePlayerHpUI;
+        EventManager.OnGameClear += OnGameClear;
+        EventManager.OnPlayerDeath += OnGameOver;
+        Time.timeScale = 1f;
+    }
+
+    void Start()
+    {
+        UpdatePhaseData();
+        UpdateExpUI(true);
+        UpdatePlayerHpUI();
+    }
+
+
+    void Update()
+    {
+        if (StageManager.Instance == null) return;
+
+        elapsedTime = StageManager.Instance.ElapsedTime;
+        
+        if (TimeText != null)
+            TimeText.text = $"{elapsedTime:N2}";
+
+        UpdateInfoUI();
+        UpdateExpUI(false);
+    }
+
+    private void UpdateInfoUI()
+    {
+        if (stageData == null || phaseDatas == null) return;
+
+        bool isLastPhase = currentPhase >= phaseDatas.Length - 1;
+        
+        float startTime = phaseDatas[currentPhase].RequiredTime;
+        float endTime = isLastPhase ? stageData.EndTime : phaseDatas[currentPhase + 1].RequiredTime;
+        float remaining = Mathf.Max(0, endTime - elapsedTime);
+
+        if (NextPhaseInfoText != null)
+        {
+            NextPhaseInfoText.text = isLastPhase 
+                ? $"종료까지 {remaining:N2}초" 
+                : $"다음 페이즈까지 {remaining:N2}초";
+        }
+
+        if (PhaseGauge != null)
+        {
+            float duration = endTime - startTime;
+            PhaseGauge.fillAmount = duration > 0 ? Mathf.Clamp01((elapsedTime - startTime) / duration) : 1f;
+        }
+
+        if (GameDataManager.Instance != null)
+        {
+            if (KillCountText != null)
+                KillCountText.text = $"Kills: {GameDataManager.Instance.SessionKillCount}";
+            
+            if (SpawnCountText != null && EnemyManager.Instance != null)
+            {
+                SpawnCountText.text = $"Active Enemies: {EnemyManager.Instance.activeCount}";
+            }
+        }
+    }
+
+    private void UpdateExpUI(bool immediate)
+    {
+        if (PlayerStats.Instance == null) return;
+
+        float targetFill = (float)PlayerStats.Instance.CurrentExp / PlayerStats.Instance.RequiredExp;
+
+        if (ExpGauge != null)
+        {
+            if (immediate)
+            {
+                ExpGauge.fillAmount = targetFill;
+            }
+            else
+            {
+                ExpGauge.DOKill();
+                ExpGauge.DOFillAmount(targetFill, 0.2f).SetUpdate(true);
+            }
+        }
+
+        if (LevelText != null)
+        {
+            LevelText.text = $"Lv. {PlayerStats.Instance.Level}";
+        }
+    }
+
+    private void UpdateLevelUI(int currentLevel)
+    {
+        UpdateExpUI(true);
+    }
+
+    private void UpdatePhaseData()
+    {
+        if (StageManager.Instance == null || StageManager.Instance.StageData == null) return;
+
+        stageData = StageManager.Instance.StageData;
+        phaseDatas = stageData.phaseDatas;
+        currentPhase = StageManager.Instance.currentPhase;
+    }
+
+    private void UpdatePlayerHpUI()
+    {
+        HpGauge.fillAmount = PlayerStats.Instance.CurrentHp / PlayerStats.Instance.MaxHp;
+    }
+
+    private void OnGameClear()
+    {
+        Time.timeScale = 0f;
+        ClearPanel.SetActive(true);
+    }
+
+    private void OnGameOver()
+    {
+        Time.timeScale = 0f;
+        GameOverPanel.SetActive(true);
+    }
+
+    void OnDestroy()
+    {
+        EventManager.OnPhaseChanged -= UpdatePhaseData;
+        EventManager.OnLevelUp -= UpdateLevelUI;
+        EventManager.OnPlayerHpChanged -= UpdatePlayerHpUI;
+        EventManager.OnGameClear -= OnGameClear;
+        EventManager.OnPlayerDeath -= OnGameOver;
+    }
+}

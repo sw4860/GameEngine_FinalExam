@@ -27,3 +27,18 @@ MonoBehaviour:
     Mode: 1
     ReverseSign: 1
     LevelDescription: 
+  - Type: 2
+    Value: 0.24
+    Mode: 1
+    ReverseSign: 1
+    LevelDescription: 
+  - Type: 2
+    Value: 0.32
+    Mode: 1
+    ReverseSign: 1
+    LevelDescription: 
+  - Type: 2
+    Value: 0.4
+    Mode: 1
+    ReverseSign: 1
+    LevelDescription: 

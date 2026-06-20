@@ -6,6 +6,7 @@ public class GameDataManager : MonoBehaviour
 
     public GameData CurrentData;
     public int SessionKillCount;
+    public float SessionSurvivedTime;
 
     void Awake()
     {

@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 996f3099073173443885c167a8c260ee, type: 3}
+  m_Name: LightningSkillData
+  m_EditorClassIdentifier: Assembly-CSharp::LightningSkillData
+  SkillName: "!!\uBC88\uAC1C!!"
+  Description: lightning
+  Icon: {fileID: 0}
+  CurrentLevel: 0
+  LightningEffectPrefab: {fileID: 4511971010640581677, guid: 7efd36fe955abf145b7380fb86855fc3, type: 3}
+  UseDirectPlay: 1
+  AnimParameterName: AnimIndex
+  AnimStatePrefix: Lightning_
+  Levels:
+  - Damage: 0.5
+    MinStrikeCount: 1
+    MaxStrikeCount: 2
+    StrikeDuration: 0.5
+    StrikeRadius: 1
+    SearchRadius: 25
+    Cooldown: 1
+    StatModifiers: []
+    LevelDescription: lightning
+  - Damage: 1
+    MinStrikeCount: 2
+    MaxStrikeCount: 4
+    StrikeDuration: 0.3
+    StrikeRadius: 2
+    SearchRadius: 25
+    Cooldown: 0.8
+    StatModifiers: []
+    LevelDescription: lightning

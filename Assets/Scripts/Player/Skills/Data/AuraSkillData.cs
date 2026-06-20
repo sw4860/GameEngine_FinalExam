@@ -40,7 +40,9 @@ public class AuraSkillData : SkillData
     public override void OnUpdate(GameObject owner)
     {
         _timer += Time.deltaTime;
-        if (_timer >= CurrentLevelData.Interval)
+
+        float actualInterval = GetModifiedCooldown(CurrentLevelData.Interval);
+        if (_timer >= actualInterval)
         {
             _timer = 0;
             ApplyDamage(owner);
