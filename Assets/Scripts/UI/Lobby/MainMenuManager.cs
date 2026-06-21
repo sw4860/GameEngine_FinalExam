@@ -10,11 +10,16 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button UpgradeButton;
     [SerializeField] private Button CharacterSelectButton;
     [SerializeField] private Button MapSelectButton;
+    [SerializeField] private Button AchievementButton;
+    [SerializeField] private Button SettingsButton;
+    [SerializeField] private Button QuitButton;
 
     [Header("Lobby UI Panels")]
     [SerializeField] private LobbyUpgradeUIManager UpgradeUI;
     [SerializeField] private CharacterSelectionUIManager CharacterSelectUI;
     [SerializeField] private StageSelectionUIManager MapSelectUI;
+    [SerializeField] private AchievementListUIManager AchievementUI;
+    [SerializeField] private AudioSettingsUIManager SettingsUI;
 
     [Header("Press Any Key Screen")]
     [SerializeField] private GameObject pressAnyKeyPanel;
@@ -59,7 +64,18 @@ public class MainMenuManager : MonoBehaviour
         {
             MapSelectButton.onClick.AddListener(ToggleMapSelectUI);
         }
-
+        if (AchievementButton != null && AchievementUI != null)
+        {
+            AchievementButton.onClick.AddListener(ToggleAchievementUI);
+        }
+        if (SettingsButton != null && SettingsUI != null)
+        {
+            SettingsButton.onClick.AddListener(ToggleSettingsUI);
+        }
+        if (QuitButton != null)
+        {
+            QuitButton.onClick.AddListener(OnQuitGame);
+        }
         InitUIState();
     }
 
@@ -71,6 +87,8 @@ public class MainMenuManager : MonoBehaviour
         if (UpgradeUI != null) UpgradeUI.gameObject.SetActive(false);
         if (CharacterSelectUI != null) CharacterSelectUI.gameObject.SetActive(false);
         if (MapSelectUI != null) MapSelectUI.gameObject.SetActive(false);
+        if (AchievementUI != null) AchievementUI.gameObject.SetActive(false);
+        if (SettingsUI != null) SettingsUI.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -264,6 +282,14 @@ public class MainMenuManager : MonoBehaviour
         {
             MapSelectButton.onClick.RemoveListener(ToggleMapSelectUI);
         }
+        if (AchievementButton != null && AchievementUI != null)
+        {
+            AchievementButton.onClick.RemoveListener(ToggleAchievementUI);
+        }
+        if (SettingsButton != null && SettingsUI != null)
+        {
+            SettingsButton.onClick.RemoveListener(ToggleSettingsUI);
+        }
     }
 
     private void ToggleUpgradeUI()
@@ -299,6 +325,34 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    private void ToggleAchievementUI()
+    {
+        if (AchievementUI == null) return;
+        bool isOpen = AchievementUI.gameObject.activeSelf;
+        CloseAllPanels();
+        if (!isOpen)
+        {
+            AchievementUI.Show();
+        }
+    }
+
+    private void ToggleSettingsUI()
+    {
+        if (SettingsUI == null) return;
+        bool isOpen = SettingsUI.gameObject.activeSelf;
+        CloseAllPanels();
+        if (!isOpen)
+        {
+            SettingsUI.Show();
+        }
+    }
+
+    private void OnQuitGame()
+    {
+        GameDataManager.Instance.SaveGame();
+        Application.Quit();
+    }
+
     private void CloseAllPanels()
     {
         if (UpgradeUI != null && UpgradeUI.gameObject.activeSelf)
@@ -312,6 +366,14 @@ public class MainMenuManager : MonoBehaviour
         if (MapSelectUI != null && MapSelectUI.gameObject.activeSelf)
         {
             MapSelectUI.Hide();
+        }
+        if (AchievementUI != null && AchievementUI.gameObject.activeSelf)
+        {
+            AchievementUI.Hide();
+        }
+        if (SettingsUI != null && SettingsUI.gameObject.activeSelf)
+        {
+            SettingsUI.Hide();
         }
     }
 }

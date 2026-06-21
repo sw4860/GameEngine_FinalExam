@@ -34,32 +34,26 @@ public class AchievementPresenter : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnAchievementUnlocked += QueueUnlockPresentation;
-#if UNITY_EDITOR
-        Debug.Log("[업적 프리젠터] OnEnable - 이벤트 구독 완료");
-#endif
     }
 
     private void OnDisable()
     {
         EventManager.OnAchievementUnlocked -= QueueUnlockPresentation;
-#if UNITY_EDITOR
-        Debug.Log("[업적 프리젠터] OnDisable - 이벤트 구독 해제");
-#endif
     }
 
     private void OnDestroy()
     {
-#if UNITY_EDITOR
-        Debug.Log("[업적 프리젠터] OnDestroy - 프리젠터 오브젝트 파괴됨");
-#endif
+    }
+
+    public void PlayPresentation(AchievementData data)
+    {
+        if (data == null) return;
+        QueueUnlockPresentation(data);
     }
 
     private void QueueUnlockPresentation(AchievementData data)
     {
         _unlockQueue.Enqueue(data);
-#if UNITY_EDITOR
-        Debug.Log($"[업적 연출 대기열] Enqueue 완료 - 현재 대기열 크기: {_unlockQueue.Count}, 대상: {data.Title}");
-#endif
         if (_presentationCoroutine == null)
         {
             _presentationCoroutine = StartCoroutine(PresentationRoutine());
@@ -71,9 +65,6 @@ public class AchievementPresenter : MonoBehaviour
         while (_unlockQueue.Count > 0)
         {
             AchievementData data = _unlockQueue.Dequeue();
-#if UNITY_EDITOR
-            Debug.Log($"[업적 연출 대기열] Dequeue 실행 - 남은 큐 크기: {_unlockQueue.Count}, 대상 업적: {data.Title} (등급: {data.Grade})");
-#endif
             GameObject prefab = GetPrefab(data.Grade);
 
             if (prefab != null)
@@ -93,12 +84,6 @@ public class AchievementPresenter : MonoBehaviour
                 {
                     uiItem.Setup(data);
                 }
-            }
-            else
-            {
-#if UNITY_EDITOR
-                Debug.LogWarning($"[업적 연출 경고] {data.Grade} 등급에 해당하는 UI 프리팹이 인스펙터에 등록되어 있지 않습니다!");
-#endif
             }
 
             PlaySound(data.Grade);

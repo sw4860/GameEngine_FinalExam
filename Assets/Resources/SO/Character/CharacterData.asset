@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharacterData
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   CharacterName: "\uC778\uAC04"
-  CharacterIcon: {fileID: 0}
+  CharacterIcon: {fileID: -2565224687826385976, guid: f01307dfa71abce458de082dd88af3d9, type: 3}
   AnimatorController: {fileID: 22100000, guid: fd7ccae34edb10340a2d1ad1ed3c589c, type: 2}
   BaseStats: {fileID: 11400000, guid: 1da854cbed6477646854c26cc16df0d5, type: 2}
   BaseSkill: {fileID: 11400000, guid: 52fc4bda7a53c2344996934a880e5539, type: 2}

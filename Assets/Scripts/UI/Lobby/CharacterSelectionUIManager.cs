@@ -42,8 +42,23 @@ public class CharacterSelectionUIManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        EventManager.OnGameDataReloaded += HandleDataReloaded;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnGameDataReloaded -= HandleDataReloaded;
+    }
+
+    private void HandleDataReloaded()
+    {
+        if (gameObject.activeSelf)
+        {
+            UpdateGoldText();
+            RefreshItems();
+        }
     }
 
     public void Show()

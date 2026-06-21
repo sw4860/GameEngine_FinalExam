@@ -7,11 +7,14 @@ public class AchievementManager : MonoBehaviour
     private static AchievementManager _instance;
     public static AchievementManager Instance => _instance;
 
+    public List<AchievementData> AchievementDataList => _achievementDataList;
+
     private readonly List<AchievementData> _achievementDataList = new List<AchievementData>();
     private readonly Dictionary<AchievementType, List<AchievementData>> _achievementGroups = new Dictionary<AchievementType, List<AchievementData>>();
     private readonly Dictionary<string, float> _achievementProgressMap = new Dictionary<string, float>();
     private readonly HashSet<string> _unlockedAchievements = new HashSet<string>();
     private readonly Queue<AchievementData> _pendingInGameUnlocks = new Queue<AchievementData>();
+    private readonly Dictionary<string, int> _nameToIdMap = new Dictionary<string, int>();
 
     private void Awake()
     {
@@ -36,11 +39,24 @@ public class AchievementManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "GameScene")
+        {
+            if (PlayerStats.Instance != null && PlayerStats.Instance.CurrentHp > 0)
+            {
+                float surviveTime = StageManager.Instance != null ? StageManager.Instance.ElapsedTime : Time.timeSinceLevelLoad;
+                UpdateProgress(AchievementType.SurviveTime, surviveTime);
+            }
+        }
+    }
+
     private void OnEnable()
     {
         EventManager.OnEnemyDeath += HandleEnemyDeath;
         EventManager.OnPlayerDeath += HandlePlayerDeath;
         EventManager.OnGameClear += HandleGameClear;
+        EventManager.OnPhaseChanged += HandlePhaseChanged;
     }
 
     private void OnDisable()
@@ -48,6 +64,7 @@ public class AchievementManager : MonoBehaviour
         EventManager.OnEnemyDeath -= HandleEnemyDeath;
         EventManager.OnPlayerDeath -= HandlePlayerDeath;
         EventManager.OnGameClear -= HandleGameClear;
+        EventManager.OnPhaseChanged -= HandlePhaseChanged;
     }
 
     private void LoadAchievementsFromResources()
@@ -56,15 +73,27 @@ public class AchievementManager : MonoBehaviour
         if (dataArray == null) return;
 
         _achievementDataList.AddRange(dataArray);
+        _achievementDataList.Sort((a, b) => a.Id.CompareTo(b.Id));
 
-        foreach (var data in dataArray)
+        _nameToIdMap.Clear();
+        foreach (var data in _achievementDataList)
         {
+            if (!_nameToIdMap.ContainsKey(data.name))
+            {
+                _nameToIdMap[data.name] = data.Id;
+            }
+
             if (!_achievementGroups.ContainsKey(data.AchievementType))
             {
                 _achievementGroups[data.AchievementType] = new List<AchievementData>();
             }
             _achievementGroups[data.AchievementType].Add(data);
         }
+    }
+
+    private string GetAchievementKey(AchievementData data)
+    {
+        return data.Id > 0 ? data.Id.ToString() : data.name;
     }
 
     private void HandleEnemyDeath()
@@ -74,14 +103,48 @@ public class AchievementManager : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
+        float surviveTime = StageManager.Instance != null ? StageManager.Instance.ElapsedTime : Time.timeSinceLevelLoad;
+        UpdateProgress(AchievementType.SurviveTime, surviveTime);
         UpdateProgress(AchievementType.TotalDeath, 1f);
         TriggerAllPendingUnlocks();
     }
 
     private void HandleGameClear()
     {
-        UpdateProgress(AchievementType.SurviveTime, Time.timeSinceLevelLoad);
+        float surviveTime = StageManager.Instance != null ? StageManager.Instance.ElapsedTime : Time.timeSinceLevelLoad;
+        UpdateProgress(AchievementType.SurviveTime, surviveTime);
         TriggerAllPendingUnlocks();
+    }
+
+    private void HandlePhaseChanged()
+    {
+        if (StageManager.Instance == null || StageManager.Instance.StageData == null) return;
+
+        string currentStage = StageManager.Instance.StageData.StageName;
+        int reachedPhase = StageManager.Instance.currentPhase;
+
+        UpdatePhaseProgress(currentStage, reachedPhase);
+    }
+
+    public void UpdatePhaseProgress(string stageName, int phase)
+    {
+        if (!_achievementGroups.TryGetValue(AchievementType.ReachPhase, out var list)) return;
+
+        foreach (var data in list)
+        {
+            string key = GetAchievementKey(data);
+            if (_unlockedAchievements.Contains(key)) continue;
+
+            if (!string.IsNullOrEmpty(data.TargetStageName) && data.TargetStageName != stageName) continue;
+
+            float next = phase;
+            _achievementProgressMap[key] = next;
+
+            if (next >= data.Value)
+            {
+                UnlockAchievement(data);
+            }
+        }
     }
 
     public void UpdateProgress(AchievementType type, float amount)
@@ -90,16 +153,12 @@ public class AchievementManager : MonoBehaviour
 
         foreach (var data in list)
         {
-            string key = data.name;
+            string key = GetAchievementKey(data);
             if (_unlockedAchievements.Contains(key)) continue;
 
             _achievementProgressMap.TryGetValue(key, out float current);
             float next = (type == AchievementType.SurviveTime || type == AchievementType.CurrentMoney) ? amount : current + amount;
             _achievementProgressMap[key] = next;
-
-#if UNITY_EDITOR
-            Debug.Log($"[업적 진행] {data.Title} - 진행 상태: {next} / {data.Value}");
-#endif
 
             if (next >= data.Value)
             {
@@ -110,31 +169,21 @@ public class AchievementManager : MonoBehaviour
 
     private void UnlockAchievement(AchievementData data)
     {
-        string key = data.name;
+        string key = GetAchievementKey(data);
         if (!_unlockedAchievements.Contains(key))
         {
             _unlockedAchievements.Add(key);
             SaveProgress();
-
-#if UNITY_EDITOR
-            Debug.Log($"[업적 완료] {data.Title} 해금 완료 (등급: {data.Grade})");
-#endif
 
             bool shouldUnlockImmediately = data.CanUnlockInGame || 
                 UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "GameScene";
 
             if (shouldUnlockImmediately)
             {
-#if UNITY_EDITOR
-                Debug.Log($"[업적 이벤트 발송] {data.Title} - 즉시 해금 연출 이벤트 트리거 (CanUnlockInGame: {data.CanUnlockInGame}, Scene: {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name})");
-#endif
                 EventManager.OnAchievementUnlocked?.Invoke(data);
             }
             else
             {
-#if UNITY_EDITOR
-                Debug.Log($"[업적 보류 등록] {data.Title} - 인게임 내 보류 대상이므로 펜딩 큐에 임시 대기");
-#endif
                 _pendingInGameUnlocks.Enqueue(data);
             }
         }
@@ -149,7 +198,7 @@ public class AchievementManager : MonoBehaviour
         }
     }
 
-    private void SaveProgress()
+    public void SyncProgressToGameData()
     {
         if (GameDataManager.Instance == null || GameDataManager.Instance.CurrentData == null) return;
 
@@ -167,8 +216,15 @@ public class AchievementManager : MonoBehaviour
                 Value = pair.Value
             });
         }
+    }
 
-        GameDataManager.Instance.SaveGame();
+    private void SaveProgress()
+    {
+        SyncProgressToGameData();
+        if (GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.SaveGame();
+        }
     }
 
     public void LoadProgress()
@@ -176,35 +232,37 @@ public class AchievementManager : MonoBehaviour
         if (GameDataManager.Instance == null || GameDataManager.Instance.CurrentData == null) return;
 
         var currentData = GameDataManager.Instance.CurrentData;
+        bool needsMigrationSave = false;
 
         _unlockedAchievements.Clear();
-        foreach (var key in currentData.UnlockedAchievements)
+        foreach (var originalKey in currentData.UnlockedAchievements)
         {
+            string key = originalKey;
+            if (_nameToIdMap.TryGetValue(originalKey, out int id) && id > 0)
+            {
+                key = id.ToString();
+                needsMigrationSave = true;
+            }
             _unlockedAchievements.Add(key);
         }
 
         _achievementProgressMap.Clear();
         foreach (var progress in currentData.AchievementProgressList)
         {
-            _achievementProgressMap[progress.Key] = progress.Value;
+            string key = progress.Key;
+            if (_nameToIdMap.TryGetValue(progress.Key, out int id) && id > 0)
+            {
+                key = id.ToString();
+                needsMigrationSave = true;
+            }
+            _achievementProgressMap[key] = progress.Value;
+        }
+
+        if (needsMigrationSave)
+        {
+            SaveProgress();
         }
     }
 
-#if UNITY_EDITOR
-    public void DebugPrintAllStatus()
-    {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        sb.AppendLine("=== [업적 진행 상태] ===");
-        foreach (var data in _achievementDataList)
-        {
-            string key = data.name;
-            bool isUnlocked = _unlockedAchievements.Contains(key);
-            _achievementProgressMap.TryGetValue(key, out float progress);
-            sb.AppendLine($"- [{data.Title}] 해금 여부: {(isUnlocked ? "해금 완료" : "잠김")} | 진행 수치: {progress} / {data.Value} (타입: {data.AchievementType})");
-        }
-        sb.AppendLine("=======================");
-        Debug.Log(sb.ToString());
-    }
-#endif
 }
 

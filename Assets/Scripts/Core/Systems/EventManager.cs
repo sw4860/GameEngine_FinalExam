@@ -9,4 +9,5 @@ public class EventManager
     public static Action OnPlayerHpChanged;
     public static Action<int> OnLevelUp;
     public static Action<AchievementData> OnAchievementUnlocked;
+    public static Action OnGameDataReloaded;
 }

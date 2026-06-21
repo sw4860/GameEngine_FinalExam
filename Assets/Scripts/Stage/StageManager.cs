@@ -32,6 +32,7 @@ public class StageManager : MonoBehaviour
     void Start()
     {
         ElapsedTime = 0.0f;
+        EventManager.OnPhaseChanged?.Invoke();
     }
 
     void Update()

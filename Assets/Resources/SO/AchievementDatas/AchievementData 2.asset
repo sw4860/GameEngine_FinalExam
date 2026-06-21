@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4a12b5133194c840a1efbe1e51f39b3, type: 3}
   m_Name: AchievementData 2
   m_EditorClassIdentifier: Assembly-CSharp::AchievementData
+  _id: 11
   _title: "\uC0DD\uC874 \uC804\uBB38\uAC00"
   _achievementType: 0
   _grade: 1
   _value: 600
-  _description: "\uCD5C\uACE0"
+  _description: "\uC544\uBB34\uACF3\uC5D0\uC11C 600\uCD08 \uC0B4\uC544\uB0A8\uAE30"
   _icon: {fileID: 0}
-  _canUnlockInGame: 0
+  _canUnlockInGame: 1
+  _targetStageName: 

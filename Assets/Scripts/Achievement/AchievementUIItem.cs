@@ -9,6 +9,7 @@ public class AchievementUIItem : MonoBehaviour
     [SerializeField] private RectTransform _rectTransform;
     [SerializeField] private Image _iconImage;
     [SerializeField] private TextMeshProUGUI _titleText;
+    [SerializeField] private TextMeshProUGUI _descriptionText;
 
     [SerializeField] private Sprite _particleSprite;
     [SerializeField] private int _particleCount = 20;
@@ -96,6 +97,11 @@ public class AchievementUIItem : MonoBehaviour
             _titleText.text = data.Title;
         }
 
+        if (_descriptionText != null)
+        {
+            _descriptionText.text = data.Description;
+        }
+
         if (_animationCoroutine != null)
         {
             StopCoroutine(_animationCoroutine);
@@ -144,9 +150,6 @@ public class AchievementUIItem : MonoBehaviour
 
     private IEnumerator AnimateNormalPopup()
     {
-#if UNITY_EDITOR
-        Debug.Log($"[일반 팝업 연출] 애니메이션 시작 - 대상: {(_titleText != null ? _titleText.text : "이름 없음")}");
-#endif
         _rectTransform.localScale = _originalScale;
         _rectTransform.anchoredPosition = _normalStartPosition;
         float elapsed = 0f;
@@ -179,9 +182,6 @@ public class AchievementUIItem : MonoBehaviour
 
     private IEnumerator AnimateChallengePopup()
     {
-#if UNITY_EDITOR
-        Debug.Log($"[챌린지 팝업 연출] 애니메이션 시작 - 대상: {(_titleText != null ? _titleText.text : "이름 없음")}, 피크 스케일: {_originalScale.x * 1.15f}");
-#endif
         float elapsed = 0f;
         float scaleDuration = 0.3f;
         float peakScale = _originalScale.x * 1.15f;
@@ -244,29 +244,33 @@ public class AchievementUIItem : MonoBehaviour
             float speed = Random.Range(_particleMinSpeed, _particleMaxSpeed);
             Vector2 velocity = new Vector2(Mathf.Cos(angle) * speed, Mathf.Sin(angle) * speed);
 
-            StartCoroutine(AnimateParticle(rect, img, velocity));
+            float startScale = Random.Range(0.5f, 1.5f);
+            float randomFadeDuration = Random.Range(_particleFadeDuration * 0.6f, _particleFadeDuration * 1.4f);
+
+            StartCoroutine(AnimateParticle(rect, img, velocity, startScale, randomFadeDuration));
         }
     }
 
-    private IEnumerator AnimateParticle(RectTransform rect, Image img, Vector2 velocity)
+    private IEnumerator AnimateParticle(RectTransform rect, Image img, Vector2 velocity, float startScale, float fadeDuration)
     {
         float elapsed = 0f;
         Color startColor = img.color;
         Vector2 position = rect.anchoredPosition;
+        Vector3 initialScale = new Vector3(startScale, startScale, 1f);
 
-        while (elapsed < _particleFadeDuration)
+        while (elapsed < fadeDuration)
         {
             if (rect == null || img == null) yield break;
 
             elapsed += Time.unscaledDeltaTime;
-            float t = elapsed / _particleFadeDuration;
+            float t = elapsed / fadeDuration;
 
             velocity.y -= _particleGravity * Time.unscaledDeltaTime;
             position += velocity * Time.unscaledDeltaTime;
             rect.anchoredPosition = position;
 
             img.color = Color.Lerp(startColor, new Color(startColor.r, startColor.g, startColor.b, 0f), t);
-            rect.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t);
+            rect.localScale = Vector3.Lerp(initialScale, Vector3.zero, t);
 
             yield return null;
         }

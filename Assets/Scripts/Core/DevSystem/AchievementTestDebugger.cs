@@ -8,29 +8,20 @@ public class AchievementTestDebugger : MonoBehaviour
         Keyboard keyboard = Keyboard.current;
         if (keyboard == null) return;
 
+        if (AchievementPresenter.Instance == null) return;
+
         if (keyboard.digit1Key.wasPressedThisFrame)
         {
-            AchievementManager.Instance.UpdateProgress(AchievementType.TotalKill, 10f);
+            AchievementData rawNormal = ScriptableObject.CreateInstance<AchievementData>();
+            rawNormal.InitForDebug(991, "일반 업적 해금!", AchievementGrade.Normal);
+            AchievementPresenter.Instance.PlayPresentation(rawNormal);
         }
 
         if (keyboard.digit2Key.wasPressedThisFrame)
         {
-            AchievementManager.Instance.UpdateProgress(AchievementType.TotalMoney, 50f);
-        }
-
-        if (keyboard.digit3Key.wasPressedThisFrame)
-        {
-            AchievementManager.Instance.UpdateProgress(AchievementType.SurviveTime, 600f);
-        }
-
-        if (keyboard.digit4Key.wasPressedThisFrame)
-        {
-            AchievementManager.Instance.TriggerAllPendingUnlocks();
-        }
-
-        if (keyboard.digit5Key.wasPressedThisFrame)
-        {
-            AchievementManager.Instance.DebugPrintAllStatus();
+            AchievementData rawChallenge = ScriptableObject.CreateInstance<AchievementData>();
+            rawChallenge.InitForDebug(992, "챌린지 업적 해금!", AchievementGrade.Challenge);
+            AchievementPresenter.Instance.PlayPresentation(rawChallenge);
         }
     }
 }

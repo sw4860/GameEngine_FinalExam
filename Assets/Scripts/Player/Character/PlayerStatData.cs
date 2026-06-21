@@ -42,6 +42,7 @@ public class PlayerStatData : ScriptableObject
     public PlayerStatData Clone()
     {
         PlayerStatData clone = CreateInstance<PlayerStatData>();
+        clone.BaseMaxHp = BaseMaxHp;
         clone.BaseMoveSpeed = BaseMoveSpeed;
         clone.BaseDamage = BaseDamage;
         clone.BaseExpMultiplier = BaseExpMultiplier;

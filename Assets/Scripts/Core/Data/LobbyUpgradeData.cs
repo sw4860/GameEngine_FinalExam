@@ -41,6 +41,8 @@ public class LobbyUpgradeData : ScriptableObject
                 return data.CoolDownUpgrade;
             case StatType.ExpMultiplier:
                 return data.ExpUpgrade;
+            case StatType.MoveSpeed:
+                return data.Upgrade;
             default:
                 return 0;
         }
@@ -68,6 +70,9 @@ public class LobbyUpgradeData : ScriptableObject
                 break;
             case StatType.ExpMultiplier:
                 data.ExpUpgrade = clampedLevel;
+                break;
+            case StatType.MoveSpeed:
+                data.Upgrade = clampedLevel;
                 break;
         }
     }
