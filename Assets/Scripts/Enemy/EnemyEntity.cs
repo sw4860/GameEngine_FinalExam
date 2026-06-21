@@ -67,6 +67,11 @@ public class EnemyEntity : MonoBehaviour
         if (!IsActive || isDying) return; 
         CurrentHp -= damage;
 
+        if (DamageTextManager.Instance != null)
+        {
+            DamageTextManager.Instance.SpawnDamageText(transform.position, damage);
+        }
+
         if (animator != null && animator.runtimeAnimatorController != null)
         {
             if (EnemyManager.Instance != null)

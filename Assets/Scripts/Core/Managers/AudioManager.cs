@@ -50,9 +50,23 @@ public class AudioManager : MonoBehaviour
 
     private AudioSource CreateNewSfxSource()
     {
-        GameObject obj = new GameObject("SFXSource", typeof(AudioSource));
-        obj.transform.SetParent(transform);
+        GameObject obj;
+        if (_sfxSourcePrefab != null)
+        {
+            obj = Instantiate(_sfxSourcePrefab, transform);
+            obj.name = "SFXSource";
+        }
+        else
+        {
+            obj = new GameObject("SFXSource", typeof(AudioSource));
+            obj.transform.SetParent(transform);
+        }
+
         AudioSource source = obj.GetComponent<AudioSource>();
+        if (source == null)
+        {
+            source = obj.AddComponent<AudioSource>();
+        }
         source.playOnAwake = false;
 
         if (_audioMixer != null)

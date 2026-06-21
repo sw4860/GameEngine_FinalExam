@@ -19,7 +19,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private CharacterSelectionUIManager CharacterSelectUI;
     [SerializeField] private StageSelectionUIManager MapSelectUI;
     [SerializeField] private AchievementListUIManager AchievementUI;
-    [SerializeField] private AudioSettingsUIManager SettingsUI;
+    [SerializeField] private SettingsUIManager SettingsUI;
 
     [Header("Press Any Key Screen")]
     [SerializeField] private GameObject pressAnyKeyPanel;

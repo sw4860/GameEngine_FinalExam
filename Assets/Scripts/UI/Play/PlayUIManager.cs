@@ -23,10 +23,29 @@ public class PlayUIManager : MonoBehaviour
     [Header("GameOver UI")]
     public GameObject GameOverPanel;
 
+    [Header("Clear UI Reference")]
+    [SerializeField] private TextMeshProUGUI _clearKillText;
+    [SerializeField] private TextMeshProUGUI _clearTimeText;
+    [SerializeField] private Button _clearLobbyButton;
+    [SerializeField] private Button _clearRestartButton;
+
+    [Header("GameOver UI Reference")]
+    [SerializeField] private TextMeshProUGUI _gameOverKillText;
+    [SerializeField] private TextMeshProUGUI _gameOverTimeText;
+    [SerializeField] private Button _gameOverLobbyButton;
+    [SerializeField] private Button _gameOverRestartButton;
+
+    [Header("Pause UI")]
+    [SerializeField] private GameObject _pausePanel;
+    [SerializeField] private Button _pauseLobbyButton;
+    [SerializeField] private Button _pauseResumeButton;
+    [SerializeField] private Button _pauseRestartButton;
+
     private StageData stageData;
     private PhaseData[] phaseDatas;
     private int currentPhase;
     private float elapsedTime;
+    private bool _isPaused;
 
     void Awake()
     {
@@ -36,18 +55,31 @@ public class PlayUIManager : MonoBehaviour
         EventManager.OnGameClear += OnGameClear;
         EventManager.OnPlayerDeath += OnGameOver;
         Time.timeScale = 1f;
+
+        BindButtonEvents();
     }
 
     void Start()
     {
+        if (GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.SessionKillCount = 0;
+        }
+
+        if (_pausePanel != null)
+        {
+            _pausePanel.SetActive(false);
+        }
+
         UpdatePhaseData();
         UpdateExpUI(true);
         UpdatePlayerHpUI();
     }
 
-
     void Update()
     {
+        HandleKeyboardInput();
+
         if (StageManager.Instance == null) return;
 
         elapsedTime = StageManager.Instance.ElapsedTime;
@@ -57,6 +89,103 @@ public class PlayUIManager : MonoBehaviour
 
         UpdateInfoUI();
         UpdateExpUI(false);
+    }
+
+    private void HandleKeyboardInput()
+    {
+        if (UnityEngine.InputSystem.Keyboard.current != null && 
+            UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            TogglePause();
+        }
+    }
+
+    private void BindButtonEvents()
+    {
+        if (_clearLobbyButton != null)
+        {
+            _clearLobbyButton.onClick.AddListener(ReturnToLobby);
+        }
+        if (_clearRestartButton != null)
+        {
+            _clearRestartButton.onClick.AddListener(RestartGame);
+        }
+        if (_gameOverLobbyButton != null)
+        {
+            _gameOverLobbyButton.onClick.AddListener(ReturnToLobby);
+        }
+        if (_gameOverRestartButton != null)
+        {
+            _gameOverRestartButton.onClick.AddListener(RestartGame);
+        }
+        if (_pauseLobbyButton != null)
+        {
+            _pauseLobbyButton.onClick.AddListener(ReturnToLobby);
+        }
+        if (_pauseResumeButton != null)
+        {
+            _pauseResumeButton.onClick.AddListener(TogglePause);
+        }
+        if (_pauseRestartButton != null)
+        {
+            _pauseRestartButton.onClick.AddListener(RestartGame);
+        }
+    }
+
+    private void UnbindButtonEvents()
+    {
+        if (_clearLobbyButton != null)
+        {
+            _clearLobbyButton.onClick.RemoveListener(ReturnToLobby);
+        }
+        if (_clearRestartButton != null)
+        {
+            _clearRestartButton.onClick.RemoveListener(RestartGame);
+        }
+        if (_gameOverLobbyButton != null)
+        {
+            _gameOverLobbyButton.onClick.RemoveListener(ReturnToLobby);
+        }
+        if (_gameOverRestartButton != null)
+        {
+            _gameOverRestartButton.onClick.RemoveListener(RestartGame);
+        }
+        if (_pauseLobbyButton != null)
+        {
+            _pauseLobbyButton.onClick.RemoveListener(ReturnToLobby);
+        }
+        if (_pauseResumeButton != null)
+        {
+            _pauseResumeButton.onClick.RemoveListener(TogglePause);
+        }
+        if (_pauseRestartButton != null)
+        {
+            _pauseRestartButton.onClick.RemoveListener(RestartGame);
+        }
+    }
+
+    private void TogglePause()
+    {
+        if (ClearPanel.activeSelf || GameOverPanel.activeSelf) return;
+
+        _isPaused = !_isPaused;
+        if (_pausePanel != null)
+        {
+            _pausePanel.SetActive(_isPaused);
+        }
+        Time.timeScale = _isPaused ? 0f : 1f;
+    }
+
+    private void ReturnToLobby()
+    {
+        Time.timeScale = 1f;
+        SceneTransitionManager.Instance.LoadScene("MainScene");
+    }
+
+    private void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneTransitionManager.Instance.LoadScene("GameScene");
     }
 
     private void UpdateInfoUI()
@@ -142,12 +271,36 @@ public class PlayUIManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         ClearPanel.SetActive(true);
+
+        if (GameDataManager.Instance != null)
+        {
+            if (_clearKillText != null)
+            {
+                _clearKillText.text = $"Total Kills: {GameDataManager.Instance.SessionKillCount}";
+            }
+        }
+        if (_clearTimeText != null)
+        {
+            _clearTimeText.text = $"Survived Time: {elapsedTime:F2}s";
+        }
     }
 
     private void OnGameOver()
     {
         Time.timeScale = 0f;
         GameOverPanel.SetActive(true);
+
+        if (GameDataManager.Instance != null)
+        {
+            if (_gameOverKillText != null)
+            {
+                _gameOverKillText.text = $"Total Kills: {GameDataManager.Instance.SessionKillCount}";
+            }
+        }
+        if (_gameOverTimeText != null)
+        {
+            _gameOverTimeText.text = $"Survived Time: {elapsedTime:F2}s";
+        }
     }
 
     void OnDestroy()
@@ -157,5 +310,7 @@ public class PlayUIManager : MonoBehaviour
         EventManager.OnPlayerHpChanged -= UpdatePlayerHpUI;
         EventManager.OnGameClear -= OnGameClear;
         EventManager.OnPlayerDeath -= OnGameOver;
+
+        UnbindButtonEvents();
     }
 }
