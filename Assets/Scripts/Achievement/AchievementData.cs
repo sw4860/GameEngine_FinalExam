@@ -10,12 +10,28 @@ public enum AchievementType
     TotalDeath
 }
 
+public enum AchievementGrade
+{
+    Normal,
+    Challenge
+}
+
 [CreateAssetMenu(fileName = "AchievementData", menuName = "AchievementData")]
 public class AchievementData : ScriptableObject
 {
-    public AchievementType AchievementType;
-    public float Value = 1;
-    public string Description;
-    public Sprite Icon;
-    public bool CanUnlockInGame = false;
+    [SerializeField] private string _title;
+    [SerializeField] private AchievementType _achievementType;
+    [SerializeField] private AchievementGrade _grade;
+    [SerializeField] private float _value = 1;
+    [SerializeField] private string _description;
+    [SerializeField] private Sprite _icon;
+    [SerializeField] private bool _canUnlockInGame = false;
+
+    public string Title => _title;
+    public AchievementType AchievementType => _achievementType;
+    public AchievementGrade Grade => _grade;
+    public float Value => _value;
+    public string Description => _description;
+    public Sprite Icon => _icon;
+    public bool CanUnlockInGame => _canUnlockInGame;
 }

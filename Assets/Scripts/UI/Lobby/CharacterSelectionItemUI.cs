@@ -135,7 +135,7 @@ public class CharacterSelectionItemUI : MonoBehaviour
             {
                 if (currentData.Gold >= characterData.UnlockGoldCost)
                 {
-                    currentData.Gold -= characterData.UnlockGoldCost;
+                    GameDataManager.Instance.ConsumeGold(characterData.UnlockGoldCost);
                     currentData.UnlockedCharacters.Add(characterData.name);
                     
                     GameDataManager.Instance.SaveGame();

@@ -32,6 +32,10 @@ public class GameDataManager : MonoBehaviour
     public void LoadGame()
     {
         CurrentData = SaveManager.Load();
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.LoadProgress();
+        }
     }
 
     public void AddKill()
@@ -49,6 +53,22 @@ public class GameDataManager : MonoBehaviour
     {
         CurrentData.Gold += amount;
         Debug.Log($"골드 획득: {amount}. 현재 골드: {CurrentData.Gold}");
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.UpdateProgress(AchievementType.TotalMoney, amount);
+            AchievementManager.Instance.UpdateProgress(AchievementType.CurrentMoney, CurrentData.Gold);
+        }
+    }
+
+    public void ConsumeGold(int amount)
+    {
+        CurrentData.Gold -= amount;
+        Debug.Log($"골드 소비: {amount}. 현재 골드: {CurrentData.Gold}");
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.UpdateProgress(AchievementType.TotalConsumeMoney, amount);
+            AchievementManager.Instance.UpdateProgress(AchievementType.CurrentMoney, CurrentData.Gold);
+        }
     }
 
     private void OnApplicationQuit()

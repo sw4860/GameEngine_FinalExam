@@ -2,6 +2,13 @@ using System;
 using System.Collections.Generic;
 
 [Serializable]
+public class AchievementProgressData
+{
+    public string Key;
+    public float Value;
+}
+
+[Serializable]
 public class GameData
 {
     public int TotalKillCount = 0;
@@ -17,6 +24,7 @@ public class GameData
 
     public List<string> UnlockedCharacters = new();
     public List<string> UnlockedAchievements = new();
+    public List<AchievementProgressData> AchievementProgressList = new();
 
     public string SelectedCharacterName = "";
     public string SelectedStageName = "";

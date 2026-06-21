@@ -97,8 +97,7 @@ public class LobbyUpgradeItemUI : MonoBehaviour
         int cost = upgradeData.GetCostForNextLevel(currentLevel);
         if (currentData.Gold >= cost)
         {
-            // 골드 차감 및 레벨 증가
-            currentData.Gold -= cost;
+            GameDataManager.Instance.ConsumeGold(cost);
             upgradeData.SetCurrentLevel(currentData, currentLevel + 1);
             
             GameDataManager.Instance.SaveGame();
