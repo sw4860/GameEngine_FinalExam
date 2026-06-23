@@ -164,4 +164,16 @@ public class LobbyUpgradeUIManager : MonoBehaviour
             }
         }
     }
+
+    private void OnDestroy()
+    {
+        if (canvasGroup != null)
+        {
+            canvasGroup.DOKill();
+        }
+        if (panelRect != null)
+        {
+            panelRect.DOKill();
+        }
+    }
 }

@@ -16,11 +16,10 @@ public class AuraSkillData : SkillData
     }
 
     [Header("Aura Settings")]
-    public GameObject AuraPrefab;
     public AuraLevel[] Levels;
 
     private float _timer;
-    private Transform _auraTransform;
+    private AuraEffect _auraEffect;
 
     public override int MaxLevel => Levels.Length;
     private AuraLevel CurrentLevelData => Levels[Mathf.Clamp(CurrentLevel - 1, 0, MaxLevel - 1)];
@@ -28,12 +27,10 @@ public class AuraSkillData : SkillData
     public override void OnEquip(GameObject owner)
     {
         base.OnEquip(owner);
-        if (AuraPrefab != null)
-        {
-            GameObject obj = Instantiate(AuraPrefab, owner.transform);
-            obj.transform.localPosition = Vector3.zero;
-            _auraTransform = obj.transform;
-        }
+        GameObject obj = new GameObject("AuraEffectObject");
+        obj.transform.SetParent(owner.transform);
+        obj.transform.localPosition = Vector3.zero;
+        _auraEffect = obj.AddComponent<AuraEffect>();
         UpdateEffect(owner);
     }
 
@@ -58,10 +55,9 @@ public class AuraSkillData : SkillData
     private void UpdateEffect(GameObject owner)
     {
         ApplyStatModifiers(CurrentLevelData.StatModifiers);
-        if (_auraTransform != null)
+        if (_auraEffect != null)
         {
-            float r = CurrentLevelData.Radius;
-            _auraTransform.localScale = new Vector3(r * 2, r * 2, 1);
+            _auraEffect.Setup(CurrentLevelData.Radius);
         }
     }
 

@@ -4258,6 +4258,7 @@ GameObject:
   - component: {fileID: 906220768}
   - component: {fileID: 906220767}
   - component: {fileID: 906220766}
+  - component: {fileID: 906220770}
   m_Layer: 5
   m_Name: Quit Button
   m_TagString: Untagged
@@ -4384,6 +4385,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 906220764}
   m_CullTransparentMesh: 1
+--- !u!114 &906220770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906220764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc11a53fd6146f4db68f85b6a986f2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundTrigger
+  _hoverSound: {fileID: 8300000, guid: 78962f79c89714045a81bba35908ca6e, type: 3}
+  _clickSound: {fileID: 8300000, guid: 78962f79c89714045a81bba35908ca6e, type: 3}
 --- !u!1 &908282383
 GameObject:
   m_ObjectHideFlags: 0
@@ -5530,6 +5545,7 @@ GameObject:
   - component: {fileID: 1180636906}
   - component: {fileID: 1180636905}
   - component: {fileID: 1180636904}
+  - component: {fileID: 1180636908}
   m_Layer: 5
   m_Name: Game Start Btn
   m_TagString: Untagged
@@ -5656,6 +5672,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1180636902}
   m_CullTransparentMesh: 1
+--- !u!114 &1180636908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180636902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc11a53fd6146f4db68f85b6a986f2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundTrigger
+  _hoverSound: {fileID: 8300000, guid: 78962f79c89714045a81bba35908ca6e, type: 3}
+  _clickSound: {fileID: 8300000, guid: 78962f79c89714045a81bba35908ca6e, type: 3}
 --- !u!1 &1187094387
 GameObject:
   m_ObjectHideFlags: 0

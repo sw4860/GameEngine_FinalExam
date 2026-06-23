@@ -266,6 +266,40 @@ public class MainMenuManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (pulseTween != null)
+        {
+            pulseTween.Kill();
+        }
+
+        if (menuElements != null)
+        {
+            foreach (var element in menuElements)
+            {
+                if (element != null)
+                {
+                    element.DOKill();
+                    CanvasGroup cg = element.GetComponent<CanvasGroup>();
+                    if (cg != null)
+                    {
+                        cg.DOKill();
+                    }
+                }
+            }
+        }
+
+        if (pressAnyKeyText != null)
+        {
+            pressAnyKeyText.DOKill();
+        }
+        if (pressAnyKeyCanvasGroup != null)
+        {
+            pressAnyKeyCanvasGroup.DOKill();
+        }
+        if (mainMenuCanvasGroup != null)
+        {
+            mainMenuCanvasGroup.DOKill();
+        }
+
         if (GameStartButton != null)
         {
             GameStartButton.onClick.RemoveListener(OnGameStart);
