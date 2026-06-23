@@ -8,7 +8,9 @@ public enum AchievementType
     CurrentMoney,
     TotalKill,
     TotalDeath,
-    ReachPhase
+    ReachPhase,
+    SessionKill,
+    PlayCount
 }
 
 public enum AchievementGrade

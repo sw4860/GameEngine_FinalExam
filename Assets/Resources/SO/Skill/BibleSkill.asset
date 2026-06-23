@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf91230332bd954e8642a9dfecbd25b, type: 3}
+  m_Name: BibleSkill
+  m_EditorClassIdentifier: Assembly-CSharp::BibleSkillData
+  SkillName: BT
+  Description: 
+  Icon: {fileID: 0}
+  CurrentLevel: 0
+  OriginAsset: {fileID: 0}
+  _biblePrefab: {fileID: 4532520215892205415, guid: e5cb5f03e8c69524fa910fb37daa9547, type: 3}
+  _levels:
+  - Damage: 1
+    ProjectileCount: 1
+    OrbitRadius: 1
+    RotationSpeed: 100
+    HitRadius: 0.7
+    HitInterval: 0
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1
+    ProjectileCount: 2
+    OrbitRadius: 2
+    RotationSpeed: 200
+    HitRadius: 0.7
+    HitInterval: 0
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1
+    ProjectileCount: 4
+    OrbitRadius: 2.5
+    RotationSpeed: 300
+    HitRadius: 0.7
+    HitInterval: 0
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1
+    ProjectileCount: 8
+    OrbitRadius: 3
+    RotationSpeed: 400
+    HitRadius: 0.7
+    HitInterval: 0
+    StatModifiers: []
+    LevelDescription: 

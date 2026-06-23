@@ -264,6 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   CharacterData: {fileID: 11400000, guid: aa3c057765407604ba549c22c5395f37, type: 2}
   StatData: {fileID: 0}
+  LevelUpSound: {fileID: 8300000, guid: 838ab9ab397f03d4796b523b7761148f, type: 3}
   Level: 1
   CurrentExp: 0
   MaxHp: 100

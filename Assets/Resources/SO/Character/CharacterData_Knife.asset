@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c59a3bd7c81f6c489cf30f3cc76f9f5, type: 3}
+  m_Name: CharacterData_Knife
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  CharacterName: "\uCE7C"
+  CharacterIcon: {fileID: 0}
+  AnimatorController: {fileID: 22100000, guid: fd7ccae34edb10340a2d1ad1ed3c589c, type: 2}
+  BaseStats: {fileID: 11400000, guid: 1da854cbed6477646854c26cc16df0d5, type: 2}
+  BaseSkill: {fileID: 11400000, guid: 7c43ecc911c3ac44dbfd332c12e1d474, type: 2}
+  MaxSkillSlots: 6
+  IsDefaultUnlocked: 0
+  UnlockGoldCost: 100
+  UnlockAchievementId: 

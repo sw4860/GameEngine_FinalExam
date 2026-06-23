@@ -29,4 +29,5 @@ public class StageData : ScriptableObject
     [Header("Stage Settings")]
     public PhaseData[] phaseDatas;
     public float EndTime = 300.0f;
+    public AudioClip BGM;
 }

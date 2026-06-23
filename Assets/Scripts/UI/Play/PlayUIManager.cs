@@ -64,6 +64,7 @@ public class PlayUIManager : MonoBehaviour
         if (GameDataManager.Instance != null)
         {
             GameDataManager.Instance.SessionKillCount = 0;
+            GameDataManager.Instance.AddPlayCount();
         }
 
         if (_pausePanel != null)

@@ -33,6 +33,12 @@ public class StageManager : MonoBehaviour
     {
         ElapsedTime = 0.0f;
         EventManager.OnPhaseChanged?.Invoke();
+
+        // BGM 재생
+        if (StageData != null && StageData.BGM != null)
+        {
+            AudioManager.Instance.PlayBGM(StageData.BGM);
+        }
     }
 
     void Update()

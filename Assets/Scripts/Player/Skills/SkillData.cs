@@ -34,6 +34,7 @@ public abstract class SkillData : ScriptableObject
     public Sprite Icon;
 
     [HideInInspector] public int CurrentLevel = 0;
+    [HideInInspector] public SkillData OriginAsset;
 
     public abstract int MaxLevel { get; }
     public bool IsMaxLevel => CurrentLevel >= MaxLevel;

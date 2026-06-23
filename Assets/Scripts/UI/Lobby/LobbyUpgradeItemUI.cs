@@ -13,12 +13,12 @@ public class LobbyUpgradeItemUI : MonoBehaviour
     [SerializeField] private Button upgradeButton;
 
     private LobbyUpgradeData upgradeData;
-    private System.Action onUpgradeSuccess;
+    private System.Action<bool> _onUpgradeResult;
 
-    public void Setup(LobbyUpgradeData data, System.Action onUpgrade)
+    public void Setup(LobbyUpgradeData data, System.Action<bool> onUpgrade)
     {
         upgradeData = data;
-        onUpgradeSuccess = onUpgrade;
+        _onUpgradeResult = onUpgrade;
 
         upgradeButton.onClick.RemoveAllListeners();
         upgradeButton.onClick.AddListener(OnUpgradeClick);
@@ -69,10 +69,9 @@ public class LobbyUpgradeItemUI : MonoBehaviour
             int cost = upgradeData.GetCostForNextLevel(currentLevel);
             if (costText != null) costText.text = $"{cost} G";
 
-            // 골드 부족 시 버튼 비활성화
             if (upgradeButton != null)
             {
-                upgradeButton.interactable = currentData.Gold >= cost;
+                upgradeButton.interactable = true;
             }
         }
         else
@@ -102,8 +101,11 @@ public class LobbyUpgradeItemUI : MonoBehaviour
             
             GameDataManager.Instance.SaveGame();
 
-            // 효과음 재생 등을 위해 콜백 실행
-            onUpgradeSuccess?.Invoke();
+            _onUpgradeResult?.Invoke(true);
+        }
+        else
+        {
+            _onUpgradeResult?.Invoke(false);
         }
     }
 

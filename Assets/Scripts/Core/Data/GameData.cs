@@ -14,6 +14,7 @@ public class GameData
     public int TotalKillCount = 0;
     public int TotalSpawnedCount = 0;
     public int Gold = 0;
+    public int PlayCount = 0;
     public bool IsDamageTextEnabled = true;
 
     public int DamageUpgrade = 0;

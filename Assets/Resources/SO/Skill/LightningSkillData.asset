@@ -13,29 +13,57 @@ MonoBehaviour:
   m_Name: LightningSkillData
   m_EditorClassIdentifier: Assembly-CSharp::LightningSkillData
   SkillName: "!!\uBC88\uAC1C!!"
-  Description: lightning
+  Description: "\uBC88\uAC1C \uCF85\uCF85"
   Icon: {fileID: 0}
   CurrentLevel: 0
-  LightningEffectPrefab: {fileID: 4511971010640581677, guid: 7efd36fe955abf145b7380fb86855fc3, type: 3}
-  UseDirectPlay: 1
-  AnimParameterName: AnimIndex
-  AnimStatePrefix: Lightning_
-  Levels:
+  OriginAsset: {fileID: 0}
+  _lightningEffectPrefab: {fileID: 4511971010640581677, guid: 7efd36fe955abf145b7380fb86855fc3, type: 3}
+  _useDirectPlay: 1
+  _animParameterName: AnimIndex
+  _animStatePrefix: Lightning_
+  _levels:
   - Damage: 0.5
     MinStrikeCount: 1
     MaxStrikeCount: 2
-    StrikeDuration: 0.5
-    StrikeRadius: 1
-    SearchRadius: 25
+    StrikeDuration: 0.2
+    StrikeRadius: 0.5
+    SearchRadius: 30
     Cooldown: 1
     StatModifiers: []
-    LevelDescription: lightning
-  - Damage: 1
+    LevelDescription: 
+  - Damage: 0.5
     MinStrikeCount: 2
-    MaxStrikeCount: 4
-    StrikeDuration: 0.3
-    StrikeRadius: 2
-    SearchRadius: 25
-    Cooldown: 0.8
+    MaxStrikeCount: 3
+    StrikeDuration: 0.2
+    StrikeRadius: 0.5
+    SearchRadius: 30
+    Cooldown: 0.85
     StatModifiers: []
-    LevelDescription: lightning
+    LevelDescription: 
+  - Damage: 0.75
+    MinStrikeCount: 3
+    MaxStrikeCount: 4
+    StrikeDuration: 0.2
+    StrikeRadius: 0.5
+    SearchRadius: 30
+    Cooldown: 0.75
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 0.75
+    MinStrikeCount: 3
+    MaxStrikeCount: 7
+    StrikeDuration: 0.2
+    StrikeRadius: 0.5
+    SearchRadius: 30
+    Cooldown: 0.6
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1
+    MinStrikeCount: 3
+    MaxStrikeCount: 8
+    StrikeDuration: 0.2
+    StrikeRadius: 0.5
+    SearchRadius: 30
+    Cooldown: 0.5
+    StatModifiers: []
+    LevelDescription: 

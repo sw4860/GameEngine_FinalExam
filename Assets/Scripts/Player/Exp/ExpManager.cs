@@ -14,6 +14,7 @@ public class ExpManager : MonoBehaviour
     [Header("Prefabs & Assets")]
     public GameObject ExpPrefab;
     public Sprite[] ExpSprites;
+    public AudioClip CollectSound;
 
     [Header("Settings")]
     public float CollectRadius = 0.5f;
@@ -26,6 +27,7 @@ public class ExpManager : MonoBehaviour
     private Queue<ExpEntity> _expPool = new Queue<ExpEntity>();
     private ExpEntity[] _activeSlots;
     private List<int> _activeIndices;
+    private float _lastCollectSoundTime = -1f;
 
     private JobHandle _lateHandle;
     private JobHandle _mergeJobHandle;
@@ -238,6 +240,12 @@ public class ExpManager : MonoBehaviour
                 if (PlayerStats.Instance != null)
                 {
                     PlayerStats.Instance.AddExp(expValue);
+                }
+
+                if (CollectSound != null && Time.time - _lastCollectSoundTime > 0.03f)
+                {
+                    AudioManager.Instance.PlaySFX(CollectSound);
+                    _lastCollectSoundTime = Time.time;
                 }
 
                 SpatialSystem.Instance.DeactivateExp(idx);

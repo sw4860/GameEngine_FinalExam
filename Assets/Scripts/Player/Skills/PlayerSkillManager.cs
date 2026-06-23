@@ -42,6 +42,7 @@ public class PlayerSkillManager : MonoBehaviour
         if (skillSO == null) return;
 
         SkillData skillInstance = Instantiate(skillSO);
+        skillInstance.OriginAsset = skillSO;
         skillInstance.OnEquip(gameObject);
         _activeSkills.Add(skillInstance);
     }

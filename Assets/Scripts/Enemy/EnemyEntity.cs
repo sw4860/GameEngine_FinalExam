@@ -5,6 +5,7 @@ using DG.Tweening;
 public class EnemyEntity : MonoBehaviour
 {
     public EnemyData EnemyData;
+    public AudioClip HitSound;
     public int PoolIndex = -1; 
     public float CurrentHp;
     [HideInInspector] public bool IsActive;
@@ -15,6 +16,7 @@ public class EnemyEntity : MonoBehaviour
     private Animator animator;
     private MaterialPropertyBlock propBlock;
     private static readonly int FlashHash = Shader.PropertyToID("_Flash");
+    private static float _lastGlobalHitSoundTime = -1f;
 
     void Awake()
     {
@@ -72,6 +74,12 @@ public class EnemyEntity : MonoBehaviour
             DamageTextManager.Instance.SpawnDamageText(transform.position, damage);
         }
 
+        if (HitSound != null && Time.time - _lastGlobalHitSoundTime > 0.03f)
+        {
+            AudioManager.Instance.PlaySFX(HitSound);
+            _lastGlobalHitSoundTime = Time.time;
+        }
+
         if (animator != null && animator.runtimeAnimatorController != null)
         {
             if (EnemyManager.Instance != null)
@@ -114,7 +122,6 @@ public class EnemyEntity : MonoBehaviour
     public void ResetFlash()
     {
         if (spriteRenderer == null) return;
-        // PropertyBlock을 null로 설정하여 개별 속성을 해제하고 배칭(Batching)에 복귀시킵니다.
         spriteRenderer.SetPropertyBlock(null);
     }
 

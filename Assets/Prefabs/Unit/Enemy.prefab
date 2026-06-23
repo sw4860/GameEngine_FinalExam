@@ -106,12 +106,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyEntity
   EnemyData: {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
+  HitSound: {fileID: 8300000, guid: 6655bfd40370fed4cabbe7ce11f22164, type: 3}
   PoolIndex: -1
   CurrentHp: 0
   IsActive: 0
   isDying: 0
   DeathTimer: 0
-  FlashMaterial: {fileID: 2100000, guid: b3dc0f2f8d2415d41be4f33bb7391361, type: 2}
 --- !u!95 &7213050942848526663
 Animator:
   serializedVersion: 7

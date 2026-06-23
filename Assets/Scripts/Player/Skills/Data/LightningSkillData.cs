@@ -9,35 +9,34 @@ public class LightningSkillData : SkillData
     [Serializable]
     public struct LightningLevel
     {
-        public float Damage;             // 번개 한 발당 공격력
-        public int MinStrikeCount;       // 최소 번개 수
-        public int MaxStrikeCount;       // 최대 번개 수
-        public float StrikeDuration;     // 번개들이 모두 떨어지는 데 걸리는 총 지속 시간
-        public float StrikeRadius;       // 번개의 공격 판정 반경
-        public float SearchRadius;       // 적을 탐색할 플레이어 기준 반경
-        public float Cooldown;           // 스킬 재사용 대기시간
+        public float Damage;
+        public int MinStrikeCount;
+        public int MaxStrikeCount;
+        public float StrikeDuration;
+        public float StrikeRadius;
+        public float SearchRadius;
+        public float Cooldown;
         public BaseStatModifier[] StatModifiers;
         [TextArea] public string LevelDescription;
     }
 
-    [Header("Lightning Prefab & Animation Settings")]
-    public GameObject LightningEffectPrefab;  // 번개 이펙트 프리팹
-    public bool UseDirectPlay = true;         // true이면 파라미터 대신 지정한 State 이름으로 직접 재생합니다.
-    public string AnimParameterName = "AnimIndex"; // 애니메이터의 int형 파라미터명 (기본값: AnimIndex)
-    public string AnimStatePrefix = "Lightning_";  // 직접 재생 시 사용할 상태 이름의 접두사 (예: Lightning_0)
-
-    [Header("Lightning Settings")]
-    public LightningLevel[] Levels;
+    [SerializeField] private GameObject _lightningEffectPrefab;
+    [SerializeField] private bool _useDirectPlay = true;
+    [SerializeField] private string _animParameterName = "AnimIndex";
+    [SerializeField] private string _animStatePrefix = "Lightning_";
+    [SerializeField] private LightningLevel[] _levels;
 
     private float _cooldownTimer;
+    private readonly Queue<GameObject> _lightningPool = new Queue<GameObject>();
 
-    public override int MaxLevel => Levels.Length;
-    private LightningLevel CurrentLevelData => Levels[Mathf.Clamp(CurrentLevel - 1, 0, MaxLevel - 1)];
+    public override int MaxLevel => _levels.Length;
+    private LightningLevel CurrentLevelData => _levels[Mathf.Clamp(CurrentLevel - 1, 0, MaxLevel - 1)];
 
     public override void OnEquip(GameObject owner)
     {
         base.OnEquip(owner);
         _cooldownTimer = 0f;
+        _lightningPool.Clear();
         ApplyStatModifiers(CurrentLevelData.StatModifiers);
     }
 
@@ -62,12 +61,11 @@ public class LightningSkillData : SkillData
     public override string GetLevelUpDescription()
     {
         if (IsMaxLevel) return "MAX LEVEL";
-        return Levels[CurrentLevel].LevelDescription;
+        return _levels[CurrentLevel].LevelDescription;
     }
 
     private void TriggerLightningStorm(GameObject owner)
     {
-        // PlayerSkillManager의 Coroutine을 빌려서 번개 폭풍 실행
         PlayerSkillManager.Instance.StartCoroutine(SpawnLightningStorm(owner));
     }
 
@@ -76,14 +74,12 @@ public class LightningSkillData : SkillData
         LightningLevel data = CurrentLevelData;
         int count = UnityEngine.Random.Range(data.MinStrikeCount, data.MaxStrikeCount + 1);
 
-        // 1. 플레이어 사정거리 내 가장 가까운 적 N마리 수집 (거리 순 정렬됨)
         List<EnemyEntity> targetEnemies = GetNearestEnemies(owner.transform.position, data.SearchRadius, count);
 
         for (int i = 0; i < count; i++)
         {
             Vector2 targetPos;
 
-            // 2. 가장 가까운 타겟 적이 살아있다면 해당 적 위치, 없으면 주변 맨땅 무작위 좌표 설정
             if (targetEnemies.Count > 0 && i < targetEnemies.Count)
             {
                 var target = targetEnemies[i];
@@ -93,7 +89,6 @@ public class LightningSkillData : SkillData
                 }
                 else
                 {
-                    // 수집 후 사망 등의 예외 대비
                     Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * data.SearchRadius;
                     targetPos = (Vector2)owner.transform.position + randomOffset;
                 }
@@ -104,10 +99,8 @@ public class LightningSkillData : SkillData
                 targetPos = (Vector2)owner.transform.position + randomOffset;
             }
 
-            // 3. 개별 번개 즉시 생성 및 판정
             DropSingleLightning(targetPos, data);
 
-            // 4. 번개 폭풍 총 지속 시간에 맞게 랜덤한 딜레이 분할
             float delay = data.StrikeDuration / count;
             yield return new WaitForSeconds(UnityEngine.Random.Range(delay * 0.5f, delay * 1.5f));
         }
@@ -115,43 +108,59 @@ public class LightningSkillData : SkillData
 
     private void DropSingleLightning(Vector2 targetPos, LightningLevel data)
     {
-        // 1. 번개 비주얼 이펙트 생성
-        if (LightningEffectPrefab != null)
+        if (_lightningEffectPrefab != null)
         {
-            GameObject fx = Instantiate(LightningEffectPrefab, targetPos, Quaternion.identity);
+            GameObject fx = GetPooledLightning(targetPos);
             
-            // 2. Animator 제어 (0~3 중 하나)
             Animator animator = fx.GetComponent<Animator>();
             if (animator != null)
             {
-                int randomAnimIndex = UnityEngine.Random.Range(0, 4); // 0, 1, 2, 3
+                int randomAnimIndex = UnityEngine.Random.Range(0, 4);
                 
-                if (UseDirectPlay)
+                if (_useDirectPlay)
                 {
-                    // (방안 A) 트랜지션 없이 상태 이름을 직접 재생 (예: Lightning_0, Lightning_1...)
-                    string stateName = AnimStatePrefix + randomAnimIndex;
+                    string stateName = _animStatePrefix + randomAnimIndex;
                     animator.Play(stateName, 0, 0f);
                 }
-                else if (!string.IsNullOrEmpty(AnimParameterName))
+                else if (!string.IsNullOrEmpty(_animParameterName))
                 {
-                    // (방안 B) 파라미터 기반 트랜지션 재생 (파라미터 변경 후 강제 업데이트)
-                    animator.SetInteger(AnimParameterName, randomAnimIndex);
+                    animator.SetInteger(_animParameterName, randomAnimIndex);
                 }
                 
-                // 생성된 즉시 상태 전이가 평가되어 애니메이션이 1프레임부터 즉시 재생되도록 강제 업데이트
                 animator.Update(0f);
             }
+            PlayerSkillManager.Instance.StartCoroutine(ReturnLightningToPool(fx, 0.5f));
         }
 
-        // 3. 데미지 판정 (SpatialSystem 최적화 격자 활용)
         ApplyAreaDamage(targetPos, data);
+    }
+
+    private GameObject GetPooledLightning(Vector2 pos)
+    {
+        if (_lightningPool.Count > 0)
+        {
+            GameObject fx = _lightningPool.Dequeue();
+            fx.transform.position = pos;
+            fx.SetActive(true);
+            return fx;
+        }
+        return Instantiate(_lightningEffectPrefab, pos, Quaternion.identity);
+    }
+
+    private IEnumerator ReturnLightningToPool(GameObject fx, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (fx != null)
+        {
+            fx.SetActive(false);
+            _lightningPool.Enqueue(fx);
+        }
     }
 
     private List<EnemyEntity> GetNearestEnemies(Vector2 playerPos, float searchRadius, int maxCount)
     {
         if (SpatialSystem.Instance == null || EnemyManager.Instance == null) return new List<EnemyEntity>();
 
-        // SpatialGrid 읽기 전 비동기 Job 완료 대기
         EnemyManager.Instance.CompleteLateJob();
 
         List<(EnemyEntity enemy, float distSq)> candidates = new List<(EnemyEntity, float)>();
@@ -190,7 +199,6 @@ public class LightningSkillData : SkillData
             }
         }
 
-        // 플레이어 기준 거리순(오름차순)으로 정렬
         candidates.Sort((a, b) => a.distSq.CompareTo(b.distSq));
 
         List<EnemyEntity> found = new List<EnemyEntity>();
@@ -207,7 +215,6 @@ public class LightningSkillData : SkillData
     {
         if (SpatialSystem.Instance == null || EnemyManager.Instance == null) return;
 
-        // SpatialGrid 읽기 전 비동기 Job 완료 대기
         EnemyManager.Instance.CompleteLateJob();
 
         float radius = data.StrikeRadius;

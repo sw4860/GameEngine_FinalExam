@@ -36,6 +36,8 @@ public class AchievementManager : MonoBehaviour
         if (GameDataManager.Instance != null && GameDataManager.Instance.CurrentData != null)
         {
             UpdateProgress(AchievementType.CurrentMoney, GameDataManager.Instance.CurrentData.Gold);
+            UpdateProgress(AchievementType.TotalKill, GameDataManager.Instance.CurrentData.TotalKillCount);
+            UpdateProgress(AchievementType.PlayCount, GameDataManager.Instance.CurrentData.PlayCount);
         }
     }
 
@@ -98,7 +100,11 @@ public class AchievementManager : MonoBehaviour
 
     private void HandleEnemyDeath()
     {
-        UpdateProgress(AchievementType.TotalKill, 1f);
+        if (GameDataManager.Instance != null && GameDataManager.Instance.CurrentData != null)
+        {
+            UpdateProgress(AchievementType.TotalKill, GameDataManager.Instance.CurrentData.TotalKillCount);
+            UpdateProgress(AchievementType.SessionKill, GameDataManager.Instance.SessionKillCount);
+        }
     }
 
     private void HandlePlayerDeath()
@@ -157,7 +163,7 @@ public class AchievementManager : MonoBehaviour
             if (_unlockedAchievements.Contains(key)) continue;
 
             _achievementProgressMap.TryGetValue(key, out float current);
-            float next = (type == AchievementType.SurviveTime || type == AchievementType.CurrentMoney) ? amount : current + amount;
+            float next = (type == AchievementType.SurviveTime || type == AchievementType.CurrentMoney || type == AchievementType.TotalKill || type == AchievementType.SessionKill || type == AchievementType.PlayCount) ? amount : current + amount;
             _achievementProgressMap[key] = next;
 
             if (next >= data.Value)
@@ -204,16 +210,20 @@ public class AchievementManager : MonoBehaviour
 
         var currentData = GameDataManager.Instance.CurrentData;
 
+        UpdateProgress(AchievementType.TotalKill, currentData.TotalKillCount);
+        UpdateProgress(AchievementType.PlayCount, currentData.PlayCount);
+
         currentData.UnlockedAchievements.Clear();
         currentData.UnlockedAchievements.AddRange(_unlockedAchievements);
 
         currentData.AchievementProgressList.Clear();
         foreach (var pair in _achievementProgressMap)
         {
+            float val = IsSessionKillAchievement(pair.Key) ? 0f : pair.Value;
             currentData.AchievementProgressList.Add(new AchievementProgressData
             {
                 Key = pair.Key,
-                Value = pair.Value
+                Value = val
             });
         }
     }
@@ -255,7 +265,7 @@ public class AchievementManager : MonoBehaviour
                 key = id.ToString();
                 needsMigrationSave = true;
             }
-            _achievementProgressMap[key] = progress.Value;
+            _achievementProgressMap[key] = IsSessionKillAchievement(key) ? 0f : progress.Value;
         }
 
         if (needsMigrationSave)
@@ -264,5 +274,33 @@ public class AchievementManager : MonoBehaviour
         }
     }
 
+    private bool IsSessionKillAchievement(string key)
+    {
+        if (_achievementGroups.TryGetValue(AchievementType.SessionKill, out var list))
+        {
+            foreach (var data in list)
+            {
+                if (GetAchievementKey(data) == key)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void ResetSessionKillProgress()
+    {
+        if (_achievementGroups.TryGetValue(AchievementType.SessionKill, out var list))
+        {
+            foreach (var data in list)
+            {
+                string key = GetAchievementKey(data);
+                if (_unlockedAchievements.Contains(key)) continue;
+
+                _achievementProgressMap[key] = 0f;
+            }
+        }
+    }
 }
 

@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
     [Header("Data")]
     public CharacterData CharacterData;
     public PlayerStatData StatData;
+    public AudioClip LevelUpSound;
 
     [Header("Leveling")]
     public int Level = 1;
@@ -147,6 +148,12 @@ public class PlayerStats : MonoBehaviour
             CurrentExp -= RequiredExp;
             Level++;
             EventManager.OnLevelUp?.Invoke(Level);
+
+            // 레벨 업 소리 재생
+            if (LevelUpSound != null)
+            {
+                AudioManager.Instance.PlaySFX(LevelUpSound);
+            }
         }
     }
 }

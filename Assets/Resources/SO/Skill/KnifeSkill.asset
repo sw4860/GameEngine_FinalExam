@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174a8797bce07254085ec19442bdadc6, type: 3}
+  m_Name: KnifeSkill
+  m_EditorClassIdentifier: Assembly-CSharp::KnifeSkillData
+  SkillName: 
+  Description: 
+  Icon: {fileID: 0}
+  CurrentLevel: 0
+  OriginAsset: {fileID: 0}
+  _knifePrefab: {fileID: 32174276149622465, guid: 25cd04a30b26f3c4f86674ceb6f76635, type: 3}
+  _levels:
+  - Damage: 0.3
+    KnifeCount: 3
+    Speed: 7
+    Cooldown: 0.5
+    HitRadius: 0.4
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 0.5
+    KnifeCount: 7
+    Speed: 10
+    Cooldown: 0.5
+    HitRadius: 0.4
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 0.5
+    KnifeCount: 12
+    Speed: 12
+    Cooldown: 0.5
+    HitRadius: 0.4
+    StatModifiers: []
+    LevelDescription: 

@@ -79,3 +79,4 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
     bossData: []
   EndTime: 1800
+  BGM: {fileID: 8300000, guid: 4559935c00ef8e94b846e2e03e39f0d0, type: 3}

@@ -21,6 +21,10 @@ public class LobbyUpgradeUIManager : MonoBehaviour
     [SerializeField] private float scaleDuration = 0.3f;
     [SerializeField] private Ease easeType = Ease.OutBack;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip _successSound;
+    [SerializeField] private AudioClip _failSound;
+
     private List<LobbyUpgradeItemUI> spawnedItems = new();
     private LobbyUpgradeData[] loadedUpgrades;
 
@@ -123,29 +127,40 @@ public class LobbyUpgradeUIManager : MonoBehaviour
         }
         spawnedItems.Clear();
 
-        // 새로 생성 및 초기화
         foreach (var upgrade in loadedUpgrades)
         {
             GameObject itemObj = Instantiate(upgradeItemPrefab, itemsContainer);
             LobbyUpgradeItemUI itemUI = itemObj.GetComponent<LobbyUpgradeItemUI>();
             if (itemUI != null)
             {
-                itemUI.Setup(upgrade, OnUpgradeCompleted);
+                itemUI.Setup(upgrade, OnUpgradeResultReceived);
                 spawnedItems.Add(itemUI);
             }
         }
     }
 
-    private void OnUpgradeCompleted()
+    private void OnUpgradeResultReceived(bool isSuccess)
     {
-        UpdateGoldText();
-        
-        // 골드 차감 및 레벨 증가 후 모든 UI 항목들의 구매 가능 여부를 갱신
-        foreach (var item in spawnedItems)
+        if (isSuccess)
         {
-            if (item != null)
+            if (_successSound != null && AudioManager.Instance != null)
             {
-                item.UpdateUI();
+                AudioManager.Instance.PlaySFX(_successSound);
+            }
+            UpdateGoldText();
+            foreach (var item in spawnedItems)
+            {
+                if (item != null)
+                {
+                    item.UpdateUI();
+                }
+            }
+        }
+        else
+        {
+            if (_failSound != null && AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX(_failSound);
             }
         }
     }

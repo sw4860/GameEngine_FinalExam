@@ -108,6 +108,16 @@ public class GameDataManager : MonoBehaviour
         SessionKillCount++;
     }
 
+    public void AddPlayCount()
+    {
+        CurrentData.PlayCount++;
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.UpdateProgress(AchievementType.PlayCount, CurrentData.PlayCount);
+        }
+        SaveGame();
+    }
+
     public void AddSpawn()
     {
         CurrentData.TotalSpawnedCount++;
