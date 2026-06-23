@@ -97,17 +97,17 @@ public class AudioManager : MonoBehaviour
         SetVolume(parameterName, linearValue, true);
     }
 
-    public void SetVolume(string parameterName, float linearValue, bool saveImmediately)
+    public void SetVolume(string parameterName, float value, bool saveImmediately)
     {
         if (saveImmediately)
         {
-            PlayerPrefs.SetFloat(parameterName, linearValue);
+            PlayerPrefs.SetFloat(parameterName, value);
             PlayerPrefs.Save();
         }
 
         if (_audioMixer == null) return;
 
-        float clampedValue = Mathf.Clamp(linearValue, 0.0001f, 1f);
+        float clampedValue = Mathf.Clamp(value, 0.0001f, 1f);
         float decibel = Mathf.Log10(clampedValue) * 20f;
         _audioMixer.SetFloat(parameterName, decibel);
     }

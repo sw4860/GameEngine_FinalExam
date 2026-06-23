@@ -61,7 +61,21 @@ public class LightningSkillData : SkillData
     public override string GetLevelUpDescription()
     {
         if (IsMaxLevel) return "MAX LEVEL";
-        return _levels[CurrentLevel].LevelDescription;
+        var current = _levels[Mathf.Max(0, CurrentLevel - 1)];
+        var next = _levels[CurrentLevel];
+        var lines = new List<string>();
+
+        if (next.Damage != current.Damage) lines.Add($"공격력: {current.Damage} -> {next.Damage}");
+        if (next.MinStrikeCount != current.MinStrikeCount || next.MaxStrikeCount != current.MaxStrikeCount)
+        {
+            lines.Add($"낙뢰 횟수: {current.MinStrikeCount}~{current.MaxStrikeCount} -> {next.MinStrikeCount}~{next.MaxStrikeCount}");
+        }
+        if (next.StrikeDuration != current.StrikeDuration) lines.Add($"낙뢰 지속시간: {current.StrikeDuration}s -> {next.StrikeDuration}s");
+        if (next.StrikeRadius != current.StrikeRadius) lines.Add($"낙뢰 범위: {current.StrikeRadius} -> {next.StrikeRadius}");
+        if (next.SearchRadius != current.SearchRadius) lines.Add($"탐색 범위: {current.SearchRadius} -> {next.SearchRadius}");
+        if (next.Cooldown != current.Cooldown) lines.Add($"재사용 대기시간: {current.Cooldown}s -> {next.Cooldown}s");
+
+        return string.Join("\n", lines);
     }
 
     private void TriggerLightningStorm(GameObject owner)

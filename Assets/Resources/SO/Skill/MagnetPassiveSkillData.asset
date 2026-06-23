@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PassiveSkillData
   SkillName: "\uD68D\uB4DD\uBC94\uC704 \uC99D\uAC00 \uD328\uC2DC\uBE0C"
   Description: "\uC624\uBE0C\uC81D\uD2B8 \uD68D\uB4DD \uBC94\uC704 \uC99D\uAC00"
-  Icon: {fileID: 0}
+  Icon: {fileID: 1997828774, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   CurrentLevel: 0
+  OriginAsset: {fileID: 0}
   Levels:
   - Type: 3
     Value: 0.2

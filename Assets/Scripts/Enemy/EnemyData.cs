@@ -15,4 +15,5 @@ public class EnemyData : ScriptableObject
     public float AttackInterval = 1f;
     public float ColliderRadius;
     public bool CanNoclip = false;
+    public bool IsBoss = false;
 }

@@ -21,5 +21,8 @@ MonoBehaviour:
     SpawnInterval: 0.7
     enemyDatas:
     - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
-    bossData: []
+    bossData:
+    - EnemyData: {fileID: 0}
+      count: 0
   EndTime: 300
+  BGM: {fileID: 0}

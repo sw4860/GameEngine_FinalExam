@@ -18,6 +18,6 @@ MonoBehaviour:
   _grade: 0
   _value: 2
   _description: "\uCD08\uC6D0\uC5D0\uC11C 2\uD398\uC774\uC988 \uC0B4\uC544\uB0A8\uAE30"
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: a0bd8a9a100a5274ebf689e70e5c8fe8, type: 3}
   _canUnlockInGame: 1
   _targetStageName: "\uCD08\uC6D0"

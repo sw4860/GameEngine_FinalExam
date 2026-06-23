@@ -27,6 +27,17 @@ public class CheatManager : MonoBehaviour
             }
             Debug.Log($"[Cheat] All active enemies killed.");
         }
+
+        if (Keyboard.current.gKey.wasPressedThisFrame)
+        {
+            if (GameDataManager.Instance != null)
+            {
+                GameDataManager.Instance.AddGold(1000);
+                GameDataManager.Instance.SaveGame();
+                EventManager.OnGameDataReloaded?.Invoke();
+                Debug.Log($"[Cheat] 1000 gold added.");
+            }
+        }
     }
 #endif
 }

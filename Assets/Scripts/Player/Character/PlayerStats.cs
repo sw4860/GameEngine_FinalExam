@@ -114,11 +114,11 @@ public class PlayerStats : MonoBehaviour
                 break;
             case StatType.MagnetRadius:
                 // 1f 기준의 절대 배율 값(예: 1.1f)을 상대 증가치(+0.1f)로 환산하여 누적 합산
-                StatData.MagnetRadiusBonus += (bonusValue - 1f);
+                StatData.MagnetRadiusBonus += bonusValue;
                 break;
             case StatType.ExpMultiplier:
                 // 1f 기준의 절대 배율 값(예: 1.1f)을 상대 증가치(+0.1f)로 환산하여 누적 합산
-                StatData.ExpMultiplier += (bonusValue - 1f);
+                StatData.ExpMultiplier += bonusValue;
                 break;
         }
     }

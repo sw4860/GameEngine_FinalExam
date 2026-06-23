@@ -19,10 +19,25 @@ public class EnemyManager : MonoBehaviour
     private bool[] _activeIndexSet;
     public int activeCount => _activeIndices != null ? _activeIndices.Count : 0;
 
+    private struct BossSpawnInfo
+    {
+        public EnemyData EnemyData;
+        public float CurrentHp;
+        public bool IsRespawn;
+
+        public BossSpawnInfo(EnemyData data, float hp, bool isRespawn)
+        {
+            EnemyData = data;
+            CurrentHp = hp;
+            IsRespawn = isRespawn;
+        }
+    }
+
     private float _spawnTimer;
     private JobHandle _lateHandle;
     private readonly List<int> _toRemove = new List<int>(256);
     private readonly List<int> _dyingIndices = new List<int>(128);
+    private readonly List<BossSpawnInfo> _pendingSpawnBosses = new List<BossSpawnInfo>();
 
     [Header("Movement Weights")]
     public float SeparationWeight = 5.0f;
@@ -55,6 +70,38 @@ public class EnemyManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnPhaseChanged += HandlePhaseChanged;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnPhaseChanged -= HandlePhaseChanged;
+    }
+
+    private void HandlePhaseChanged()
+    {
+        if (StageManager.Instance == null || StageManager.Instance.StageData == null) return;
+
+        int currentPhaseIdx = StageManager.Instance.currentPhase;
+        PhaseData phase = StageManager.Instance.StageData.phaseDatas[currentPhaseIdx];
+
+        if (phase.bossData != null && phase.bossData.Length > 0)
+        {
+            foreach (var boss in phase.bossData)
+            {
+                if (boss.EnemyData != null)
+                {
+                    for (int i = 0; i < boss.count; i++)
+                    {
+                        _pendingSpawnBosses.Add(new BossSpawnInfo(boss.EnemyData, boss.EnemyData.MaxHp, false));
+                    }
+                }
+            }
         }
     }
 
@@ -222,6 +269,20 @@ public class EnemyManager : MonoBehaviour
     private void HandleSpawning()
     {
         if (StageManager.Instance == null) return;
+
+        if (_pendingSpawnBosses.Count > 0)
+        {
+            for (int i = _pendingSpawnBosses.Count - 1; i >= 0; i--)
+            {
+                BossSpawnInfo bossData = _pendingSpawnBosses[i];
+                if (enemyPool.Count > 0)
+                {
+                    SpawnEnemy(bossData.EnemyData, bossData.CurrentHp, bossData.IsRespawn);
+                    _pendingSpawnBosses.RemoveAt(i);
+                }
+            }
+        }
+
         int currentPhaseIdx = StageManager.Instance.currentPhase;
         PhaseData phase = StageManager.Instance.StageData.phaseDatas[currentPhaseIdx];
 
@@ -292,7 +353,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    private void SpawnEnemy(EnemyData data)
+    private void SpawnEnemy(EnemyData data, float customHp = -1f, bool isRespawn = false)
     {
         if (enemyPool.Count == 0) return;
 
@@ -302,6 +363,16 @@ public class EnemyManager : MonoBehaviour
         
         entity.gameObject.SetActive(true);
         entity.Init(data);
+
+        if (customHp >= 0f)
+        {
+            entity.CurrentHp = customHp;
+        }
+
+        if (!isRespawn && GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.AddSpawn();
+        }
 
         int idx = entity.PoolIndex;
         if (idx == -1)
@@ -352,6 +423,11 @@ public class EnemyManager : MonoBehaviour
             EnemyEntity entity = _activeSlots[idx];
             if (entity != null)
             {
+                if (entity.EnemyData != null && entity.EnemyData.IsBoss && !entity.isDying && entity.CurrentHp > 0)
+                {
+                    _pendingSpawnBosses.Add(new BossSpawnInfo(entity.EnemyData, entity.CurrentHp, true));
+                }
+
                 if (entity.gameObject.activeSelf)
                 {
                     entity.gameObject.SetActive(false);

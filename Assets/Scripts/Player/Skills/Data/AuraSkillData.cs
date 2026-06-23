@@ -63,9 +63,16 @@ public class AuraSkillData : SkillData
 
     public override string GetLevelUpDescription()
     {
-        return $"Damage: {CurrentLevelData.Damage} -> {(CurrentLevel < MaxLevel ? Levels[CurrentLevel].Damage.ToString() : "MAX")}\n" +
-               $"Radius: {CurrentLevelData.Radius} -> {(CurrentLevel < MaxLevel ? Levels[CurrentLevel].Radius.ToString() : "MAX")}\n" +
-               $"Interval: {CurrentLevelData.Interval} -> {(CurrentLevel < MaxLevel ? Levels[CurrentLevel].Interval.ToString() : "MAX")}\n";
+        if (IsMaxLevel) return "MAX LEVEL";
+        var current = Levels[CurrentLevel - 1];
+        var next = Levels[CurrentLevel];
+        var lines = new System.Collections.Generic.List<string>();
+
+        if (next.Damage != current.Damage) lines.Add($"공격력: {current.Damage} -> {next.Damage}");
+        if (next.Radius != current.Radius) lines.Add($"범위: {current.Radius} -> {next.Radius}");
+        if (next.Interval != current.Interval) lines.Add($"공격 간격: {current.Interval}s -> {next.Interval}s");
+
+        return string.Join("\n", lines);
     }
 
     private void ApplyDamage(GameObject owner)

@@ -179,6 +179,10 @@ public class PlayUIManager : MonoBehaviour
 
     private void ReturnToLobby()
     {
+        if (GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.SaveGame();
+        }
         Time.timeScale = 1f;
         SceneTransitionManager.Instance.LoadScene("MainScene");
     }
@@ -279,6 +283,7 @@ public class PlayUIManager : MonoBehaviour
             {
                 _clearKillText.text = $"Total Kills: {GameDataManager.Instance.SessionKillCount}";
             }
+            GameDataManager.Instance.SaveGame();
         }
         if (_clearTimeText != null)
         {
@@ -297,6 +302,7 @@ public class PlayUIManager : MonoBehaviour
             {
                 _gameOverKillText.text = $"Total Kills: {GameDataManager.Instance.SessionKillCount}";
             }
+            GameDataManager.Instance.SaveGame();
         }
         if (_gameOverTimeText != null)
         {

@@ -15,14 +15,13 @@ MonoBehaviour:
   TargetStat: 1
   UpgradeName: "\uC774\uB3D9\uC18D\uB3C4 \uC99D\uAC00"
   Description: "\uC774\uB3D9 \uC18D\uB3C4 \uC99D\uAC00"
-  Icon: {fileID: -9152409790519988990, guid: 642d806ea72f9c94c8f4f8b878f9b58c, type: 3}
+  Icon: {fileID: 21300000, guid: 461b8e1e74149284296132c62a1bdaae, type: 3}
   IsPercentage: 0
   InvertSignInUI: 0
-  LevelCosts: 14000000280000003c0000005000000064000000
-  StatBonuses:
-  - 0
-  - 0.5
-  - 0.75
-  - 1
-  - 1.25
-  - 1.5
+  Levels:
+  - Cost: 400
+    Bonus: 0.5
+  - Cost: 800
+    Bonus: 1
+  - Cost: 1600
+    Bonus: 2

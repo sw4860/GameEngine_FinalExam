@@ -125,13 +125,19 @@ public class GameDataManager : MonoBehaviour
 
     public void AddGold(int amount)
     {
-        CurrentData.Gold += amount;
-        Debug.Log($"골드 획득: {amount}. 현재 골드: {CurrentData.Gold}");
+        float multiplier = 1f;
+        if (CursedContractManager.Instance != null)
+        {
+            multiplier = CursedContractManager.Instance.GoldMultiplier;
+        }
+        int finalAmount = Mathf.RoundToInt(amount * multiplier);
+        CurrentData.Gold += finalAmount;
         if (AchievementManager.Instance != null)
         {
-            AchievementManager.Instance.UpdateProgress(AchievementType.TotalMoney, amount);
+            AchievementManager.Instance.UpdateProgress(AchievementType.TotalMoney, finalAmount);
             AchievementManager.Instance.UpdateProgress(AchievementType.CurrentMoney, CurrentData.Gold);
         }
+        EventManager.OnGameDataReloaded?.Invoke();
     }
 
     public void ConsumeGold(int amount)
@@ -143,6 +149,7 @@ public class GameDataManager : MonoBehaviour
             AchievementManager.Instance.UpdateProgress(AchievementType.TotalConsumeMoney, amount);
             AchievementManager.Instance.UpdateProgress(AchievementType.CurrentMoney, CurrentData.Gold);
         }
+        EventManager.OnGameDataReloaded?.Invoke();
     }
 
     private void OnApplicationQuit()

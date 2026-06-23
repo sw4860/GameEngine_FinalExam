@@ -21,4 +21,12 @@ public static class SaveManager
         string json = File.ReadAllText(SavePath);
         return JsonUtility.FromJson<GameData>(json);
     }
+
+    public static void DeleteSave()
+    {
+        if (File.Exists(SavePath))
+        {
+            File.Delete(SavePath);
+        }
+    }
 }

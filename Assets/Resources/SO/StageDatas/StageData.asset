@@ -49,7 +49,9 @@ MonoBehaviour:
     enemyDatas:
     - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
     - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
-    bossData: []
+    bossData:
+    - EnemyData: {fileID: 11400000, guid: 2341c630b2e52e2458b8f03f40b7e59d, type: 2}
+      count: 1
   - RequiredTime: 300
     maxEnemyCount: 250
     SpawnInterval: 0.3

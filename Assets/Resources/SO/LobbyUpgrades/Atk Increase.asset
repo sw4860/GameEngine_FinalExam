@@ -12,16 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b7283245c5bbf840a80543bc675f814, type: 3}
   m_Name: Atk Increase
   m_EditorClassIdentifier: Assembly-CSharp::LobbyUpgradeData
-  UpgradeID: Damage
+  TargetStat: 0
   UpgradeName: "\uACF5\uACA9\uB825 \uC99D\uAC00"
   Description: "\uAE30\uBCF8 \uACF5\uACA9\uB825 \uC99D\uAC00"
   Icon: {fileID: 5682877175833816285, guid: 46e97ed3fd217ad4e98ed006210d5323, type: 3}
-  LevelCosts: c8000000dc000000f000000004010000180100002c010000
-  StatBonuses:
-  - 0
-  - 1
-  - 2
-  - 3
-  - 4
-  - 5
-  - 6
+  IsPercentage: 0
+  InvertSignInUI: 0
+  Levels:
+  - Cost: 200
+    Bonus: 0.5
+  - Cost: 400
+    Bonus: 1
+  - Cost: 600
+    Bonus: 1.5
+  - Cost: 800
+    Bonus: 2
+  - Cost: 1000
+    Bonus: 2.5

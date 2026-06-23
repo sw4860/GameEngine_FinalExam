@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 613e4440a27ce5943a2a5f3beed28a15, type: 3}
+  m_Name: Contract_Time
+  m_EditorClassIdentifier: 
+  Title: "\uC2DC\uAC04 \uC65C\uACE1\uC758 \uACC4\uC57D"
+  ReturnDescription: "\uBAA8\uB4E0 \uBB34\uAE30 \uC7AC\uC0AC\uC6A9 \uB300\uAE30\uC2DC\uAC04
+    -30%"
+  RiskDescription: "\uD50C\uB808\uC774\uC5B4 \uC774\uB3D9 \uC18D\uB3C4 -25%\n[\uC2DC\uAC04
+    \uD018\uC2A4\uD2B8: 60\uCD08 \uC0DD\uC874]"
+  ReturnDamageMultiplier: 1
+  ReturnMoveSpeedMultiplier: 1
+  ReturnCooldownReductionBonus: 0.3
+  ReturnGoldMultiplier: 1
+  RiskDamageMultiplier: 1
+  RiskMoveSpeedMultiplier: 0.75
+  RiskHpDrainPerSecond: 0
+  EnemySpeedMultiplier: 1
+  QuestType: 0
+  TargetDuration: 60
+  TargetKillCount: 0

@@ -16,6 +16,7 @@ public class SettingsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _toggleLabel;
     [SerializeField] private Sprite _toggleOnSprite;
     [SerializeField] private Sprite _toggleOffSprite;
+    [SerializeField] private Button _resetDataButton;
 
     private SettingsUIManager _uiManager;
 
@@ -105,6 +106,11 @@ public class SettingsUI : MonoBehaviour
         {
             _damageTextToggle.onValueChanged.AddListener(OnDamageTextToggleChanged);
         }
+
+        if (_resetDataButton != null)
+        {
+            _resetDataButton.onClick.AddListener(ResetData);
+        }
     }
 
     private void UnbindEvents()
@@ -147,6 +153,11 @@ public class SettingsUI : MonoBehaviour
         if (_damageTextToggle != null)
         {
             _damageTextToggle.onValueChanged.RemoveListener(OnDamageTextToggleChanged);
+        }
+
+        if (_resetDataButton != null)
+        {
+            _resetDataButton.onClick.RemoveListener(ResetData);
         }
     }
 
@@ -260,6 +271,31 @@ public class SettingsUI : MonoBehaviour
         if (_toggleLabel != null)
         {
             _toggleLabel.text = value ? "ON" : "OFF";
+        }
+    }
+
+    private void ResetData()
+    {
+        SaveManager.DeleteSave();
+        PlayerPrefs.DeleteAll();
+
+        if (GameDataManager.Instance != null)
+        {
+            GameDataManager.Instance.LoadGame();
+        }
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.LoadAndApplyVolumes();
+        }
+
+        if (SceneTransitionManager.Instance != null)
+        {
+            SceneTransitionManager.Instance.LoadScene("MainScene");
+        }
+        else
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainScene");
         }
     }
 }

@@ -15,14 +15,17 @@ MonoBehaviour:
   TargetStat: 4
   UpgradeName: "\uACBD\uD5D8\uCE58 \uD68D\uB4DD\uB7C9 \uC99D\uAC00"
   Description: "\uACBD\uD5D8\uCE58 \uD68D\uB4DD\uB7C9 \uC99D\uAC00"
-  Icon: {fileID: -9152409790519988990, guid: 642d806ea72f9c94c8f4f8b878f9b58c, type: 3}
+  Icon: {fileID: 21300000, guid: 65021ceae742b8a49b70fa2de1c0cbe4, type: 3}
   IsPercentage: 1
   InvertSignInUI: 0
-  LevelCosts: 14000000280000003c0000005000000064000000
-  StatBonuses:
-  - 1
-  - 1.05
-  - 1.1
-  - 1.15
-  - 1.2
-  - 1.25
+  Levels:
+  - Cost: 1000
+    Bonus: 0.1
+  - Cost: 2000
+    Bonus: 0.2
+  - Cost: 3000
+    Bonus: 0.3
+  - Cost: 4000
+    Bonus: 0.4
+  - Cost: 5000
+    Bonus: 0.5

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LightningSkillData
   SkillName: "!!\uBC88\uAC1C!!"
   Description: "\uBC88\uAC1C \uCF85\uCF85"
-  Icon: {fileID: 0}
+  Icon: {fileID: 3191122964850554743, guid: 91a998c51a118fa40b3a0476e793722d, type: 3}
   CurrentLevel: 0
   OriginAsset: {fileID: 0}
   _lightningEffectPrefab: {fileID: 4511971010640581677, guid: 7efd36fe955abf145b7380fb86855fc3, type: 3}

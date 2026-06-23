@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abf91230332bd954e8642a9dfecbd25b, type: 3}
   m_Name: BibleSkill
   m_EditorClassIdentifier: Assembly-CSharp::BibleSkillData
-  SkillName: BT
+  SkillName: "\uC131\uACBD"
   Description: 
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: f71b7ab07321a0247bc54b72ad362271, type: 3}
   CurrentLevel: 0
   OriginAsset: {fileID: 0}
   _biblePrefab: {fileID: 4532520215892205415, guid: e5cb5f03e8c69524fa910fb37daa9547, type: 3}

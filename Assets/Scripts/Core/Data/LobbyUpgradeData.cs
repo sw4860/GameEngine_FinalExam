@@ -1,5 +1,12 @@
 using UnityEngine;
 
+[System.Serializable]
+public struct LobbyUpgradeLevelInfo
+{
+    public int Cost;
+    public float Bonus;
+}
+
 [CreateAssetMenu(fileName = "LobbyUpgradeData", menuName = "Lobby/UpgradeData")]
 public class LobbyUpgradeData : ScriptableObject
 {
@@ -15,15 +22,10 @@ public class LobbyUpgradeData : ScriptableObject
     [Tooltip("UI에서 부호를 반대로 표시할지 여부 (예: Cooldown 0.1f -> -10%로 표시)")]
     public bool InvertSignInUI = false;
 
-    [Header("Costs")]
-    [Tooltip("각 레벨로 업그레이드할 때 소모되는 골드 (예: Index 0은 1레벨로 올릴 때의 비용)")]
-    public int[] LevelCosts;
+    [Header("Upgrade Levels")]
+    public LobbyUpgradeLevelInfo[] Levels;
 
-    [Header("Stat Modification")]
-    [Tooltip("레벨별 능력치 보너스 값 (예: Index 0은 0레벨(기본)일 때의 보너스, Index 1은 1레벨일 때의 보너스)")]
-    public float[] StatBonuses;
-
-    public int MaxLevel => LevelCosts != null ? LevelCosts.Length : 0;
+    public int MaxLevel => Levels != null ? Levels.Length : 0;
 
     public int GetCurrentLevel(GameData data)
     {
@@ -42,7 +44,7 @@ public class LobbyUpgradeData : ScriptableObject
             case StatType.ExpMultiplier:
                 return data.ExpUpgrade;
             case StatType.MoveSpeed:
-                return data.Upgrade;
+                return data.MoveSpeedUpgrade;
             default:
                 return 0;
         }
@@ -72,24 +74,24 @@ public class LobbyUpgradeData : ScriptableObject
                 data.ExpUpgrade = clampedLevel;
                 break;
             case StatType.MoveSpeed:
-                data.Upgrade = clampedLevel;
+                data.MoveSpeedUpgrade = clampedLevel;
                 break;
         }
     }
 
     public int GetCostForNextLevel(int currentLevel)
     {
-        if (LevelCosts == null || currentLevel < 0 || currentLevel >= LevelCosts.Length)
+        if (Levels == null || currentLevel < 0 || currentLevel >= Levels.Length)
         {
             return -1;
         }
-        return LevelCosts[currentLevel];
+        return Levels[currentLevel].Cost;
     }
 
     public float GetBonusForLevel(int level)
     {
-        if (StatBonuses == null || StatBonuses.Length == 0) return 0f;
-        int clampedLevel = Mathf.Clamp(level, 0, StatBonuses.Length - 1);
-        return StatBonuses[clampedLevel];
+        if (level <= 0 || Levels == null || Levels.Length == 0) return 0f;
+        int clampedLevel = Mathf.Clamp(level, 1, Levels.Length);
+        return Levels[clampedLevel - 1].Bonus;
     }
 }

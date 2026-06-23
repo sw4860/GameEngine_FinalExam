@@ -141,6 +141,7 @@ SpriteAtlas:
     - e4fa421a7c09e854ea5abad5cacd68dd: 959460331882449621
     - 4fa6056ad0ce07f44bc7fa8093eef171: 7512878223096388111
     - 6d21466ae6bebfd4fb39d9226da8bbfb: -5177016038834201545
+    - 1161058a2e2edc24a864928e977d9117: 21300000
     - 49eee2aa9fc8fc24191efadbe2a95e08: -10500422234371694
     - 49eee2aa9fc8fc24191efadbe2a95e08: -4683111340605770916
     - 49eee2aa9fc8fc24191efadbe2a95e08: -5933289837275991918
@@ -280,6 +281,7 @@ SpriteAtlas:
   - {fileID: 959460331882449621, guid: e4fa421a7c09e854ea5abad5cacd68dd, type: 3}
   - {fileID: 7512878223096388111, guid: 4fa6056ad0ce07f44bc7fa8093eef171, type: 3}
   - {fileID: -5177016038834201545, guid: 6d21466ae6bebfd4fb39d9226da8bbfb, type: 3}
+  - {fileID: 21300000, guid: 1161058a2e2edc24a864928e977d9117, type: 3}
   - {fileID: -10500422234371694, guid: 49eee2aa9fc8fc24191efadbe2a95e08, type: 3}
   - {fileID: -4683111340605770916, guid: 49eee2aa9fc8fc24191efadbe2a95e08, type: 3}
   - {fileID: -5933289837275991918, guid: 49eee2aa9fc8fc24191efadbe2a95e08, type: 3}
@@ -418,6 +420,7 @@ SpriteAtlas:
   - S_Death_2
   - RogueDeathAnimation7_0
   - DownWalk1_0
+  - Chest
   - 4_4
   - 4_5
   - 4_6

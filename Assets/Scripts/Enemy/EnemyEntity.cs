@@ -137,6 +137,14 @@ public class EnemyEntity : MonoBehaviour
             ExpManager.Instance.SpawnExp(new float2(transform.position.x, transform.position.y), expValue);
         }
 
+        if (EnemyData != null && EnemyData.IsBoss)
+        {
+            if (CursedContractManager.Instance != null)
+            {
+                CursedContractManager.Instance.SpawnCursedChest(transform.position);
+            }
+        }
+
         IsActive = false;
         isDying = false; 
         if (SpatialSystem.Instance != null && SpatialSystem.Instance.FlipDying.IsCreated)

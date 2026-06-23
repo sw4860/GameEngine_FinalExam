@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 174a8797bce07254085ec19442bdadc6, type: 3}
   m_Name: KnifeSkill
   m_EditorClassIdentifier: Assembly-CSharp::KnifeSkillData
-  SkillName: 
+  SkillName: "\uCE7C"
   Description: 
-  Icon: {fileID: 0}
+  Icon: {fileID: 21300000, guid: d12f3317ac0227d449541a827e987c02, type: 3}
   CurrentLevel: 0
   OriginAsset: {fileID: 0}
   _knifePrefab: {fileID: 32174276149622465, guid: 25cd04a30b26f3c4f86674ceb6f76635, type: 3}

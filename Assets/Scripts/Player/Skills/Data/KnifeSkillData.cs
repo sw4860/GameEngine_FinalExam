@@ -56,7 +56,17 @@ public class KnifeSkillData : SkillData
     public override string GetLevelUpDescription()
     {
         if (IsMaxLevel) return "MAX LEVEL";
-        return _levels[CurrentLevel].LevelDescription;
+        var current = _levels[Mathf.Max(0, CurrentLevel - 1)];
+        var next = _levels[CurrentLevel];
+        var lines = new List<string>();
+
+        if (next.Damage != current.Damage) lines.Add($"공격력: {current.Damage} -> {next.Damage}");
+        if (next.KnifeCount != current.KnifeCount) lines.Add($"투사체 개수: {current.KnifeCount} -> {next.KnifeCount}");
+        if (next.Speed != current.Speed) lines.Add($"투사체 속도: {current.Speed} -> {next.Speed}");
+        if (next.Cooldown != current.Cooldown) lines.Add($"재사용 대기시간: {current.Cooldown}s -> {next.Cooldown}s");
+        if (next.HitRadius != current.HitRadius) lines.Add($"타격 범위: {current.HitRadius} -> {next.HitRadius}");
+
+        return string.Join("\n", lines);
     }
 
     private void TriggerKnifeStorm(GameObject owner)

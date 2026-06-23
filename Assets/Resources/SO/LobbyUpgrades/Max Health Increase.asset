@@ -18,11 +18,14 @@ MonoBehaviour:
   Icon: {fileID: -9152409790519988990, guid: 642d806ea72f9c94c8f4f8b878f9b58c, type: 3}
   IsPercentage: 0
   InvertSignInUI: 0
-  LevelCosts: 14000000280000003c0000005000000064000000
-  StatBonuses:
-  - 0
-  - 20
-  - 40
-  - 60
-  - 80
-  - 100
+  Levels:
+  - Cost: 100
+    Bonus: 20
+  - Cost: 200
+    Bonus: 40
+  - Cost: 300
+    Bonus: 60
+  - Cost: 400
+    Bonus: 80
+  - Cost: 500
+    Bonus: 100

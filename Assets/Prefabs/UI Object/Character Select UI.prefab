@@ -361,6 +361,7 @@ GameObject:
   - component: {fileID: 7655811920243684060}
   - component: {fileID: 5963877983863007348}
   - component: {fileID: 4219275851277443351}
+  - component: {fileID: 8673514342241915739}
   m_Layer: 5
   m_Name: Select Btn
   m_TagString: Untagged
@@ -487,6 +488,20 @@ MonoBehaviour:
   hoverScale: 1.05
   duration: 0.15
   easeType: 6
+--- !u!114 &8673514342241915739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4007396550200131212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dc11a53fd6146f4db68f85b6a986f2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundTrigger
+  _hoverSound: {fileID: 8300000, guid: 78962f79c89714045a81bba35908ca6e, type: 3}
+  _clickSound: {fileID: 8300000, guid: 78962f79c89714045a81bba35908ca6e, type: 3}
 --- !u!1 &5407878799513372509
 GameObject:
   m_ObjectHideFlags: 0

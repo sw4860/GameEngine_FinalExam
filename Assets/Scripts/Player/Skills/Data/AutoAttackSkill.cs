@@ -52,7 +52,15 @@ public class AutoAttackSkill : SkillData
     public override string GetLevelUpDescription()
     {
         if (IsMaxLevel) return "MAX LEVEL";
-        return Levels[CurrentLevel].LevelDescription;
+        var current = Levels[Mathf.Max(0, CurrentLevel - 1)];
+        var next = Levels[CurrentLevel];
+        var lines = new System.Collections.Generic.List<string>();
+
+        if (next.Damage != current.Damage) lines.Add($"공격력: {current.Damage} -> {next.Damage}");
+        if (next.AttackRange != current.AttackRange) lines.Add($"공격 범위: {current.AttackRange} -> {next.AttackRange}");
+        if (next.Cooldown != current.Cooldown) lines.Add($"재사용 대기시간: {current.Cooldown}s -> {next.Cooldown}s");
+
+        return string.Join("\n", lines);
     }
 
     private bool TryAttack(GameObject owner)

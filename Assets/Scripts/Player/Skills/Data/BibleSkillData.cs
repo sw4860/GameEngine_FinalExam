@@ -93,7 +93,18 @@ public class BibleSkillData : SkillData
     public override string GetLevelUpDescription()
     {
         if (IsMaxLevel) return "MAX LEVEL";
-        return _levels[CurrentLevel].LevelDescription;
+        var current = _levels[Mathf.Max(0, CurrentLevel - 1)];
+        var next = _levels[CurrentLevel];
+        var lines = new List<string>();
+
+        if (next.Damage != current.Damage) lines.Add($"공격력: {current.Damage} -> {next.Damage}");
+        if (next.ProjectileCount != current.ProjectileCount) lines.Add($"성경 개수: {current.ProjectileCount} -> {next.ProjectileCount}");
+        if (next.OrbitRadius != current.OrbitRadius) lines.Add($"회전 반경: {current.OrbitRadius} -> {next.OrbitRadius}");
+        if (next.RotationSpeed != current.RotationSpeed) lines.Add($"회전 속도: {current.RotationSpeed} -> {next.RotationSpeed}");
+        if (next.HitRadius != current.HitRadius) lines.Add($"타격 범위: {current.HitRadius} -> {next.HitRadius}");
+        if (next.HitInterval != current.HitInterval) lines.Add($"타격 간격: {current.HitInterval}s -> {next.HitInterval}s");
+
+        return string.Join("\n", lines);
     }
 
     private void SpawnBibles(GameObject owner)

@@ -158,25 +158,42 @@ public class AchievementListUIManager : MonoBehaviour
 
         tooltipPanel.SetActive(true);
 
-        Vector3[] corners = new Vector3[4];
-        itemRect.GetWorldCorners(corners);
-        Vector3 rightPosition = (corners[1] + corners[2]) * 0.5f;
-
         RectTransform tooltipRect = tooltipPanel.GetComponent<RectTransform>();
         if (tooltipRect != null)
         {
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(tooltipRect);
+
+            Vector3[] corners = new Vector3[4];
+            itemRect.GetWorldCorners(corners);
+            Vector3 rightEdge = (corners[2] + corners[3]) * 0.5f;
+            Vector3 leftEdge = (corners[0] + corners[1]) * 0.5f;
+
             Canvas canvas = GetComponentInParent<Canvas>();
             if (canvas != null)
             {
                 RectTransform canvasRect = canvas.GetComponent<RectTransform>();
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     canvasRect, 
-                    RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, rightPosition), 
+                    RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, rightEdge), 
                     canvas.worldCamera, 
-                    out Vector2 localPoint
+                    out Vector2 localPointRight
                 );
-                
-                tooltipRect.anchoredPosition = localPoint + new Vector2(25f, 0f);
+
+                if (localPointRight.x > 150f)
+                {
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                        canvasRect, 
+                        RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, leftEdge), 
+                        canvas.worldCamera, 
+                        out Vector2 localPointLeft
+                    );
+                    float tooltipWidth = tooltipRect.rect.width;
+                    tooltipRect.anchoredPosition = localPointLeft - new Vector2(tooltipWidth + 10f, 0f);
+                }
+                else
+                {
+                    tooltipRect.anchoredPosition = localPointRight + new Vector2(-25f, 0f);
+                }
             }
         }
     }
