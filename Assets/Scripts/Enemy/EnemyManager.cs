@@ -12,6 +12,10 @@ public class EnemyManager : MonoBehaviour
     public static EnemyManager Instance;
     public GameObject EnemyPrefab;
 
+    [Header("Heal Item Spawning")]
+    public GameObject HealItemPrefab;
+    [Range(0f, 1f)] public float HealItemDropChance = 0.05f;
+
     public Queue<EnemyEntity> enemyPool = new Queue<EnemyEntity>();
 
     public EnemyEntity[] _activeSlots;

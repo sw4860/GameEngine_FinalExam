@@ -113,12 +113,15 @@ public class KnifeSkillData : SkillData
 
     private GameObject GetPooledKnife(Vector3 pos)
     {
-        if (_knifePool.Count > 0)
+        while (_knifePool.Count > 0)
         {
             GameObject knife = _knifePool.Dequeue();
-            knife.transform.position = pos;
-            knife.SetActive(true);
-            return knife;
+            if (knife != null)
+            {
+                knife.transform.position = pos;
+                knife.SetActive(true);
+                return knife;
+            }
         }
         return Instantiate(_knifePrefab, pos, Quaternion.identity);
     }

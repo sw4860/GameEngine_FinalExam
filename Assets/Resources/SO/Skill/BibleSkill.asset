@@ -22,31 +22,39 @@ MonoBehaviour:
   - Damage: 1
     ProjectileCount: 1
     OrbitRadius: 1
-    RotationSpeed: 100
+    RotationSpeed: 70
     HitRadius: 0.7
-    HitInterval: 0
+    HitInterval: 0.5
     StatModifiers: []
     LevelDescription: 
   - Damage: 1
     ProjectileCount: 2
-    OrbitRadius: 2
-    RotationSpeed: 200
+    OrbitRadius: 1.5
+    RotationSpeed: 110
     HitRadius: 0.7
-    HitInterval: 0
+    HitInterval: 0.5
     StatModifiers: []
     LevelDescription: 
   - Damage: 1
     ProjectileCount: 4
     OrbitRadius: 2.5
-    RotationSpeed: 300
+    RotationSpeed: 160
     HitRadius: 0.7
-    HitInterval: 0
+    HitInterval: 0.5
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1
+    ProjectileCount: 6
+    OrbitRadius: 3
+    RotationSpeed: 240
+    HitRadius: 0.7
+    HitInterval: 0.5
     StatModifiers: []
     LevelDescription: 
   - Damage: 1
     ProjectileCount: 8
     OrbitRadius: 3
-    RotationSpeed: 400
+    RotationSpeed: 320
     HitRadius: 0.7
     HitInterval: 0
     StatModifiers: []

@@ -18,6 +18,6 @@ MonoBehaviour:
   BaseStats: {fileID: 11400000, guid: 1da854cbed6477646854c26cc16df0d5, type: 2}
   BaseSkill: {fileID: 11400000, guid: 7c43ecc911c3ac44dbfd332c12e1d474, type: 2}
   MaxSkillSlots: 6
-  IsDefaultUnlocked: 0
-  UnlockGoldCost: 100
+  IsDefaultUnlocked: 1
+  UnlockGoldCost: 0
   UnlockAchievementId: 

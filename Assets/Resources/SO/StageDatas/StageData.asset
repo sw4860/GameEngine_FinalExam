@@ -22,63 +22,59 @@ MonoBehaviour:
     enemyDatas:
     - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
     bossData: []
-  - RequiredTime: 30
-    maxEnemyCount: 25
-    SpawnInterval: 0.5
-    enemyDatas:
-    - {fileID: 11400000, guid: f3777cb4837b42142b923adeee62ef68, type: 2}
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    bossData: []
   - RequiredTime: 60
-    maxEnemyCount: 40
+    maxEnemyCount: 15
     SpawnInterval: 0.5
     enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
-    bossData: []
-  - RequiredTime: 120
-    maxEnemyCount: 80
-    SpawnInterval: 0.5
-    enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
-    bossData: []
-  - RequiredTime: 180
-    maxEnemyCount: 125
-    SpawnInterval: 0.5
-    enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    - {fileID: 11400000, guid: e0e47666816fc494dafd8816e239fa9e, type: 2}
+    - {fileID: 11400000, guid: 3d973fb339b0900438b9ac5936dd59bf, type: 2}
     bossData:
     - EnemyData: {fileID: 11400000, guid: 2341c630b2e52e2458b8f03f40b7e59d, type: 2}
       count: 1
+  - RequiredTime: 120
+    maxEnemyCount: 25
+    SpawnInterval: 0.5
+    enemyDatas:
+    - {fileID: 11400000, guid: dd028d9561e183340aaf6bf226369b55, type: 2}
+    - {fileID: 11400000, guid: 892e3aefac9a65047abea6a5e79a0d2f, type: 2}
+    bossData:
+    - EnemyData: {fileID: 11400000, guid: 664139e041eb55a47b1a5b91dd8d4649, type: 2}
+      count: 1
+  - RequiredTime: 180
+    maxEnemyCount: 75
+    SpawnInterval: 0.5
+    enemyDatas:
+    - {fileID: 11400000, guid: dd028d9561e183340aaf6bf226369b55, type: 2}
+    - {fileID: 11400000, guid: 892e3aefac9a65047abea6a5e79a0d2f, type: 2}
+    - {fileID: 11400000, guid: d9408cb4654d06d43a16d0fc8bdb1edb, type: 2}
+    bossData:
+    - EnemyData: {fileID: 11400000, guid: 664139e041eb55a47b1a5b91dd8d4649, type: 2}
+      count: 2
   - RequiredTime: 300
-    maxEnemyCount: 250
+    maxEnemyCount: 150
+    SpawnInterval: 0.5
+    enemyDatas:
+    - {fileID: 11400000, guid: 5fbbccd803bfbde44ab61234ad216ae5, type: 2}
+    - {fileID: 11400000, guid: e0cf80baf99479741be897ca3e572f81, type: 2}
+    - {fileID: 11400000, guid: 60bad3dcc5dd5534fae1d5003fa307c9, type: 2}
+    bossData:
+    - EnemyData: {fileID: 11400000, guid: 2341c630b2e52e2458b8f03f40b7e59d, type: 2}
+      count: 1
+  - RequiredTime: 450
+    maxEnemyCount: 400
     SpawnInterval: 0.3
     enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    - {fileID: 11400000, guid: 69f7e5614b588a6478294fcd1e916d24, type: 2}
+    - {fileID: 11400000, guid: 1aeb2ee48055a8d429b2be84ef378e6c, type: 2}
+    - {fileID: 11400000, guid: bfd08c65b7b7bc948be6c11fa6112a71, type: 2}
     bossData: []
   - RequiredTime: 600
-    maxEnemyCount: 1500
-    SpawnInterval: 0.2
-    enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
-    bossData: []
-  - RequiredTime: 900
-    maxEnemyCount: 1500
+    maxEnemyCount: 1000
     SpawnInterval: 0.1
     enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
+    - {fileID: 11400000, guid: b0a119567f5e72c41aec09b0e146a7a6, type: 2}
+    - {fileID: 11400000, guid: bd5e78c2f9ccc7e41bf333a40b8d10b8, type: 2}
+    - {fileID: 11400000, guid: a8581fea495ba3949a08d030449f39ee, type: 2}
     bossData: []
-  - RequiredTime: 1200
-    maxEnemyCount: 3000
-    SpawnInterval: 0.1
-    enemyDatas:
-    - {fileID: 11400000, guid: b0c1438adfb99ed4d99794ae8ad331ea, type: 2}
-    - {fileID: 11400000, guid: f8241b99f474cf143957f85d0a6dc3e4, type: 2}
-    bossData: []
-  EndTime: 1800
+  EndTime: 900
   BGM: {fileID: 8300000, guid: 4559935c00ef8e94b846e2e03e39f0d0, type: 3}

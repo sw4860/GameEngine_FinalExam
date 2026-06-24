@@ -22,21 +22,28 @@ MonoBehaviour:
   - Damage: 0.3
     KnifeCount: 3
     Speed: 7
-    Cooldown: 0.5
+    Cooldown: 2
     HitRadius: 0.4
     StatModifiers: []
     LevelDescription: 
   - Damage: 0.5
-    KnifeCount: 7
+    KnifeCount: 5
     Speed: 10
-    Cooldown: 0.5
+    Cooldown: 1.5
     HitRadius: 0.4
     StatModifiers: []
     LevelDescription: 
-  - Damage: 0.5
-    KnifeCount: 12
+  - Damage: 0.75
+    KnifeCount: 7
     Speed: 12
-    Cooldown: 0.5
+    Cooldown: 1
+    HitRadius: 0.4
+    StatModifiers: []
+    LevelDescription: 
+  - Damage: 1
+    KnifeCount: 9
+    Speed: 12
+    Cooldown: 0.7
     HitRadius: 0.4
     StatModifiers: []
     LevelDescription: 

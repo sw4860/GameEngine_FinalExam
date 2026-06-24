@@ -168,13 +168,16 @@ public class BibleSkillData : SkillData
 
     private GameObject GetPooledBible(Vector3 pos, Transform parent)
     {
-        if (_biblePool.Count > 0)
+        while (_biblePool.Count > 0)
         {
             GameObject bible = _biblePool.Dequeue();
-            bible.transform.position = pos;
-            bible.transform.SetParent(parent);
-            bible.SetActive(true);
-            return bible;
+            if (bible != null)
+            {
+                bible.transform.position = pos;
+                bible.transform.SetParent(parent);
+                bible.SetActive(true);
+                return bible;
+            }
         }
         return Instantiate(_biblePrefab, pos, Quaternion.identity, parent);
     }

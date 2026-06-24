@@ -137,6 +137,14 @@ public class EnemyEntity : MonoBehaviour
             ExpManager.Instance.SpawnExp(new float2(transform.position.x, transform.position.y), expValue);
         }
 
+        if (EnemyManager.Instance != null && EnemyManager.Instance.HealItemPrefab != null)
+        {
+            if (UnityEngine.Random.value < EnemyManager.Instance.HealItemDropChance)
+            {
+                Instantiate(EnemyManager.Instance.HealItemPrefab, transform.position, Quaternion.identity);
+            }
+        }
+
         if (EnemyData != null && EnemyData.IsBoss)
         {
             if (CursedContractManager.Instance != null)

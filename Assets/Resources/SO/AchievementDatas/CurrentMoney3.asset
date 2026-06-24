@@ -17,7 +17,7 @@ MonoBehaviour:
   _achievementType: 3
   _grade: 1
   _value: 10000
-  _description: "1\uB9CC\uC6D0 \uBCF4\uC720"
+  _description: "10,000\uACE8\uB4DC \uBCF4\uC720"
   _icon: {fileID: -1997803578, guid: 0d5e657ee5a074e4baa53d5b248a01d2, type: 3}
   _canUnlockInGame: 0
   _targetStageName: 

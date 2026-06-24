@@ -88,30 +88,12 @@ public class LightningSkillData : SkillData
         LightningLevel data = CurrentLevelData;
         int count = UnityEngine.Random.Range(data.MinStrikeCount, data.MaxStrikeCount + 1);
 
-        List<EnemyEntity> targetEnemies = GetNearestEnemies(owner.transform.position, data.SearchRadius, count);
-
         for (int i = 0; i < count; i++)
         {
-            Vector2 targetPos;
+            if (owner == null) yield break;
 
-            if (targetEnemies.Count > 0 && i < targetEnemies.Count)
-            {
-                var target = targetEnemies[i];
-                if (target != null && target.IsActive)
-                {
-                    targetPos = target.transform.position;
-                }
-                else
-                {
-                    Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * data.SearchRadius;
-                    targetPos = (Vector2)owner.transform.position + randomOffset;
-                }
-            }
-            else
-            {
-                Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * data.SearchRadius;
-                targetPos = (Vector2)owner.transform.position + randomOffset;
-            }
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * data.SearchRadius;
+            Vector2 targetPos = (Vector2)owner.transform.position + randomOffset;
 
             DropSingleLightning(targetPos, data);
 
@@ -151,12 +133,15 @@ public class LightningSkillData : SkillData
 
     private GameObject GetPooledLightning(Vector2 pos)
     {
-        if (_lightningPool.Count > 0)
+        while (_lightningPool.Count > 0)
         {
             GameObject fx = _lightningPool.Dequeue();
-            fx.transform.position = pos;
-            fx.SetActive(true);
-            return fx;
+            if (fx != null)
+            {
+                fx.transform.position = pos;
+                fx.SetActive(true);
+                return fx;
+            }
         }
         return Instantiate(_lightningEffectPrefab, pos, Quaternion.identity);
     }
@@ -171,59 +156,7 @@ public class LightningSkillData : SkillData
         }
     }
 
-    private List<EnemyEntity> GetNearestEnemies(Vector2 playerPos, float searchRadius, int maxCount)
-    {
-        if (SpatialSystem.Instance == null || EnemyManager.Instance == null) return new List<EnemyEntity>();
 
-        EnemyManager.Instance.CompleteLateJob();
-
-        List<(EnemyEntity enemy, float distSq)> candidates = new List<(EnemyEntity, float)>();
-
-        int startX = (int)Unity.Mathematics.math.floor((playerPos.x - searchRadius) / SpatialSystem.CELL_SIZE);
-        int endX = (int)Unity.Mathematics.math.floor((playerPos.x + searchRadius) / SpatialSystem.CELL_SIZE);
-        int startY = (int)Unity.Mathematics.math.floor((playerPos.y - searchRadius) / SpatialSystem.CELL_SIZE);
-        int endY = (int)Unity.Mathematics.math.floor((playerPos.y + searchRadius) / SpatialSystem.CELL_SIZE);
-
-        var grid = SpatialSystem.Instance.SpatialGrid;
-        var activeSlots = EnemyManager.Instance._activeSlots;
-        var enemyPositions = SpatialSystem.Instance.EnemyPositions;
-        float radiusSq = searchRadius * searchRadius;
-
-        for (int x = startX; x <= endX; x++)
-        {
-            for (int y = startY; y <= endY; y++)
-            {
-                int hash = SpatialSystem.GetCellHash(new Unity.Mathematics.int2(x, y));
-                if (grid.TryGetFirstValue(hash, out int enemyIndex, out var it))
-                {
-                    do
-                    {
-                        EnemyEntity enemy = activeSlots[enemyIndex];
-                        if (enemy != null && enemy.IsActive)
-                        {
-                            Unity.Mathematics.float2 enemyPos = enemyPositions[enemyIndex];
-                            float distSq = Unity.Mathematics.math.distancesq(new Unity.Mathematics.float2(playerPos.x, playerPos.y), enemyPos);
-                            if (distSq <= radiusSq)
-                            {
-                                candidates.Add((enemy, distSq));
-                            }
-                        }
-                    } while (grid.TryGetNextValue(out enemyIndex, ref it));
-                }
-            }
-        }
-
-        candidates.Sort((a, b) => a.distSq.CompareTo(b.distSq));
-
-        List<EnemyEntity> found = new List<EnemyEntity>();
-        int limit = Mathf.Min(candidates.Count, maxCount);
-        for (int i = 0; i < limit; i++)
-        {
-            found.Add(candidates[i].enemy);
-        }
-
-        return found;
-    }
 
     private void ApplyAreaDamage(Vector2 center, LightningLevel data)
     {

@@ -27,7 +27,7 @@ public class DamageText : MonoBehaviour, IDamageText
         _startPosition = position;
         _elapsedTime = 0f;
         
-        _textMesh.SetText("{0:1}", damage);
+        _textMesh.SetText("{0:2}", damage);
         
         _textMesh.color = _initialColor;
         gameObject.SetActive(true);

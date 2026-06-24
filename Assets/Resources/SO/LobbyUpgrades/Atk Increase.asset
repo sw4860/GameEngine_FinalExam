@@ -29,3 +29,5 @@ MonoBehaviour:
     Bonus: 2
   - Cost: 1000
     Bonus: 2.5
+  - Cost: 50000
+    Bonus: 30

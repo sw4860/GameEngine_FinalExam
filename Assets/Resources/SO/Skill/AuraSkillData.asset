@@ -12,39 +12,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cf966d41a22ccf409c4d829364d948b, type: 3}
   m_Name: AuraSkillData
   m_EditorClassIdentifier: Assembly-CSharp::AuraSkillData
-  SkillName: Test
-  Description: Test
-  Icon: {fileID: 0}
+  SkillName: "\uC544\uC6B0\uB77C"
+  Description: "\uD2B9\uC815 \uBC18\uACBD\uC548\uC5D0 \uB4E4\uC5B4\uC628 \uC801\uB4E4\uC744
+    \uACF5\uACA9\uD569\uB2C8\uB2E4."
+  Icon: {fileID: 5782176491803189234, guid: 6bf2989b3407be24b88c5a18a9f238dd, type: 3}
   CurrentLevel: 0
-  AuraPrefab: {fileID: 0}
+  OriginAsset: {fileID: 0}
   Levels:
   - Damage: 0.5
-    Radius: 2
+    Radius: 1.5
     Interval: 1
     StatModifiers: []
     LevelDescription: 
   - Damage: 0.75
-    Radius: 3
+    Radius: 2
     Interval: 0.9
     StatModifiers: []
     LevelDescription: 
   - Damage: 1
-    Radius: 3.25
+    Radius: 2.25
     Interval: 0.8
     StatModifiers: []
     LevelDescription: 
   - Damage: 1.25
-    Radius: 3.5
+    Radius: 2.5
     Interval: 0.7
     StatModifiers: []
     LevelDescription: 
   - Damage: 1.5
-    Radius: 3.75
+    Radius: 2.75
     Interval: 0.6
     StatModifiers: []
     LevelDescription: 
   - Damage: 1.75
-    Radius: 4
+    Radius: 3
     Interval: 0.5
     StatModifiers: []
     LevelDescription: 

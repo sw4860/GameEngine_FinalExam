@@ -22,48 +22,48 @@ MonoBehaviour:
   _animParameterName: AnimIndex
   _animStatePrefix: Lightning_
   _levels:
-  - Damage: 0.5
-    MinStrikeCount: 1
-    MaxStrikeCount: 2
+  - Damage: 2
+    MinStrikeCount: 4
+    MaxStrikeCount: 6
     StrikeDuration: 0.2
     StrikeRadius: 0.5
-    SearchRadius: 30
-    Cooldown: 1
+    SearchRadius: 10
+    Cooldown: 0.9
     StatModifiers: []
-    LevelDescription: 
-  - Damage: 0.5
-    MinStrikeCount: 2
-    MaxStrikeCount: 3
+    LevelDescription: zhkd
+  - Damage: 3
+    MinStrikeCount: 5
+    MaxStrikeCount: 10
     StrikeDuration: 0.2
     StrikeRadius: 0.5
-    SearchRadius: 30
-    Cooldown: 0.85
-    StatModifiers: []
-    LevelDescription: 
-  - Damage: 0.75
-    MinStrikeCount: 3
-    MaxStrikeCount: 4
-    StrikeDuration: 0.2
-    StrikeRadius: 0.5
-    SearchRadius: 30
+    SearchRadius: 15
     Cooldown: 0.75
     StatModifiers: []
-    LevelDescription: 
-  - Damage: 0.75
-    MinStrikeCount: 3
-    MaxStrikeCount: 7
+    LevelDescription: zhkd
+  - Damage: 4
+    MinStrikeCount: 8
+    MaxStrikeCount: 14
     StrikeDuration: 0.2
     StrikeRadius: 0.5
-    SearchRadius: 30
+    SearchRadius: 20
     Cooldown: 0.6
     StatModifiers: []
-    LevelDescription: 
-  - Damage: 1
-    MinStrikeCount: 3
-    MaxStrikeCount: 8
+    LevelDescription: zhkd
+  - Damage: 5
+    MinStrikeCount: 9
+    MaxStrikeCount: 18
+    StrikeDuration: 0.2
+    StrikeRadius: 0.5
+    SearchRadius: 25
+    Cooldown: 0.5
+    StatModifiers: []
+    LevelDescription: zhkd
+  - Damage: 6
+    MinStrikeCount: 15
+    MaxStrikeCount: 24
     StrikeDuration: 0.2
     StrikeRadius: 0.5
     SearchRadius: 30
-    Cooldown: 0.5
+    Cooldown: 0.4
     StatModifiers: []
-    LevelDescription: 
+    LevelDescription: zhkd

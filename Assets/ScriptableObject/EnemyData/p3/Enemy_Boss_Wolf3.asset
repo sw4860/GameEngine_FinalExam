@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d57b4d9e5c7df0f448f2a055093d9a1b, type: 3}
-  m_Name: Enemy_Goblin
+  m_Name: Enemy_Boss_Wolf3
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyType: 0
   EnemySprite: {fileID: 0}
-  animOverride: {fileID: 22100000, guid: db37420503295fe449bb10bede58f52a, type: 2}
-  MoveSpeed: 3
-  MaxHp: 2
+  animOverride: {fileID: 22100000, guid: 5c0dbe6e34a70784184f3c99295b5646, type: 2}
+  MoveSpeed: 4
+  MaxHp: 100
   AttackRange: 0.5
   Damage: 2
   AttackInterval: 1
   ColliderRadius: 0.75
   CanNoclip: 0
+  IsBoss: 1
